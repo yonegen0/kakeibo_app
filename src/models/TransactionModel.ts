@@ -1,26 +1,29 @@
 /**
  * @file TransactionModel.ts
- * @description アプリケーションの基盤となる取引明細および集計データの型定義。
- * データベース、APIレスポンス、およびフロントエンドの各コンポーネント間で共有される
- * 信頼できる唯一の情報源（Single Source of Truth）として機能します。
+ * @description アプリケーションの共通データ型定義。
  */
 
-/** 金額オブジェクト */
+/**
+ * 通貨と数値をセットにした金額オブジェクト
+ * 将来的なマルチ通貨対応（USD等）を見越した構造です。
+ */
 export type Amount = {
-  value: number;    // 数値
-  unit: string;     // 'JPY' 等
+  value: number;    
+  unit: string;     
 };
 
-/** 取引明細モデル */
+/**
+ * 支出・収入の1件分を表す明細モデル
+ * 画面表示だけでなく、AWS Glue でのデータ処理時もこの構造を基準とします。
+ */
 export type TransactionModel = {
-  id: string;               // 一意識別子 (S3キー+行番号等)
-  date: string;             // ISO 8601形式 (YYYY-MM-DD)
+  id: string;               // データの重複登録を防ぐためのユニークID
+  date: string;             // 時系列分析に使用
   amount: Amount;           // 金額
   content: string;          // 内容・店名
-  category: string;         // 大項目カテゴリ
-  subCategory?: string;     // 中項目カテゴリ (任意)
-  isFixedCost: boolean;     // 固定費判定フラグ
-  source: 'moneyforward';   // データソース識別用
+  category: string;         // 分析の主軸となるカテゴリ（大項目）
+  isFixedCost: boolean;     // 節約の余地があるかを判定するためのフラグ
+  source: 'moneyforward';   // 取り込み元を識別（今後、手動入力等を追加予定）
 };
 
 /** 月次集計モデル */
