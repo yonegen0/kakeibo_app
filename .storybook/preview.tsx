@@ -6,6 +6,9 @@ import type { Preview } from '@storybook/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { theme } from '../src/lib/theme';
+import { sb } from 'storybook/test';
+
+sb.mock(import('../src/hooks/useMFUploader.ts'), { spy: true });
 
 /**
  * Storybook全体に適用されるレンダリング設定。
