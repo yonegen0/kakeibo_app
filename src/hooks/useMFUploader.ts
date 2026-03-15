@@ -1,35 +1,39 @@
 /**
  * @file useMFUploader.ts
- * @description 取引明細ファイルの読み込みおよび整合性検証を管理するカスタムフック。
+ * @description 取引明細ファイルの読み込み、バリデーション、および表示用IDの付与を一括管理するカスタムフック。
  */
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { mfCsvFileSchema, type MfCsvData } from '@/schemas/mfCsvFileSchema';
 
-/**
- * ファイルアップロード処理の実行状態と結果を定義する型。
+/** * テーブル表示用にIDを付与した取引データの型 
  */
+export type Transaction = MfCsvData[number] & {
+  id: string;
+};
+
+/** ファイルアップロード処理の実行状態と結果を定義する型 */
 export type MFUploaderResult = {
   /** 指定されたファイルの読み込み処理を開始するハンドラー */
   handleFileSelect: (file: File) => void;
-  /** 形式検証を通過した正規の取引明細データ */
-  data: MfCsvData | null;
-  /** 読み込み失敗、またはデータの不整合に関するエラー内容 */
+  /** DataGridでの表示に適した（ID付与済み）取引明細データ */
+  data: Transaction[] | null;
+  /** エラー内容 */
   error: string | null;
-  /** ファイルの解析およびデータの検証処理を実行中かを示すフラグ */
+  /** 解析および検証中フラグ */
   isParsing: boolean;
 };
 
 /**
- * 外部から取り込まれる取引データのパースおよびスキーマ検証を提供します。
+ * 外部から取り込まれる取引データのパース、スキーマ検証、およびUI向け整形を提供します。
  */
 export const useMFUploader = (): MFUploaderResult => {
-  const [data, setData] = useState<MfCsvData | null>(null);
+  const [data, setData] = useState<Transaction[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isParsing, setIsParsing] = useState(false);
 
   /**
-   * ファイルデータを読み込み、システムが許容するデータ構造へと変換・検証します。
+   * CSVをパースし、Zodによる検証を経て、各行に一意のIDを付与します。
    */
   const handleFileSelect = (file: File) => {
     setIsParsing(true);
@@ -45,19 +49,25 @@ export const useMFUploader = (): MFUploaderResult => {
         const validated = mfCsvFileSchema.safeParse(results.data);
         
         if (validated.success) {
-          // 整形済みデータをステートに保存
-          setData(validated.data);
+          // DataGrid用に各行へIDを付与してステートを更新
+          const formattedData: Transaction[] = validated.data.map((row, index) => ({
+            ...row,
+            // ファイル名、インデックス、タイムスタンプを組み合わせて一意性を確保
+            id: `${file.name}-${index}-${Date.now()}`,
+          }));
+
+          setData(formattedData);
           setError(null);
         } else {
-          // エラー詳細をコンソールに出し、ユーザーへ通知
-          setError("データの形式が正しくありません。");
+          // バリデーション失敗時の処理
+          setError("CSVの形式が正しくありません。カラム名などを確認してください。");
           console.error('[Schema Validation Error]:', validated.error);
         }
         setIsParsing(false);
       },
-      /** ファイル読み込み自体の失敗（アクセス権限等） */
-      error: () => {
-        setError("データの読み込み中に問題が発生しました。");
+      error: (err) => {
+        setError("ファイルの読み込み中に問題が発生しました。");
+        console.error('[PapaParse Error]:', err);
         setIsParsing(false);
       }
     });
