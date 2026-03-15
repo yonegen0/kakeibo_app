@@ -102,7 +102,7 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
 /**
  * データの取り込みから検証結果までを可視化するモニターコンポーネント。
  */
-export const S3UploadMonitor = ({ width, height }: S3UploadMonitorProps) => {
+export const S3UploadMonitor = (props: S3UploadMonitorProps) => {
   const { handleFileSelect, data, error, isParsing } = useMFUploader();
 
   /** 非表示のファイルインプットを擬似的にクリックするハンドラー */
@@ -123,7 +123,7 @@ export const S3UploadMonitor = ({ width, height }: S3UploadMonitorProps) => {
   };
 
   return (
-    <StyledRootContainer width={width} height={height}>
+    <StyledRootContainer width={props.width} height={props.height}>
       {/* 隠し要素：ファイル選択をプログラムから制御するために配置 */}
       <input id="csv-upload-input" type="file" accept=".csv" hidden onChange={onFileChange} />
 
