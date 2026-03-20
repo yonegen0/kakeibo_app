@@ -16,12 +16,13 @@
 - 参照した情報には、可能な限り出典を明記すること
 
 対象の優先ソース例:
-- TypeScript: https://www.typescriptlang.org/
-- React: https://react.dev/
-- Next.js: https://nextjs.org/docs
-- MUI: https://mui.com/
-- Storybook: https://storybook.js.org/
-- AWS SDK v3 / S3 / Bedrock: https://docs.aws.amazon.com/
+
+- TypeScript: <https://www.typescriptlang.org/>
+- React: <https://react.dev/>
+- Next.js: <https://nextjs.org/docs>
+- MUI: <https://mui.com/>
+- Storybook: <https://storybook.js.org/>
+- AWS SDK v3 / S3 / Bedrock: <https://docs.aws.amazon.com/>
 
 ---
 
@@ -40,20 +41,25 @@
 ディレクトリ構造は Atomic Design をベースとし、以下の責務を厳守すること。
 
 ## Atoms
+
 - MUI のラップなど、最小単位のコンポーネント
 - 特定のビジネスロジックを持たない
 
 ## Molecules
+
 - 複数の Atoms を組み合わせた、汎用的なパーツ
 
 ## Organisms
+
 - ドメイン知識を持つ具体的な機能
 - カスタム Hooks（Container）を呼び出し、UI（Presentation）とロジックを統合する境界
 
 ## Templates / Pages
+
 - レイアウトの配置とルーティングを担当する
 
 ## 原則
+
 - UI（Presentation）とロジック（Hooks / Container）を分離する
 - Atoms / Molecules は Storybook で独立して視認・テスト可能にする
 - 結合は Organisms 以上でのみ行う
@@ -63,6 +69,7 @@
 # 3. コメント・ドキュメント規約
 
 ## ファイルヘッダー
+
 - すべてのファイル冒頭に `@file` と `@description` を含む JSDoc を記述すること
 
 例:
@@ -73,6 +80,7 @@
      */
 
 ## 関数・Hooks・Props
+
 - すべての Props 定義に JSDoc コメントを付与すること
 - 主要な関数に JSDoc コメントを付与すること
 - Hooks の戻り値にも必要に応じて説明を付与すること
@@ -91,20 +99,24 @@
 # 4. 実装・コーディング規約（コア思想）
 
 ## 厳格な型定義
+
 - ドメインモデル（例: `TransactionModel`）を最優先する
 - 数値や金額はプリミティブ型で扱わず、オブジェクト型（例: `Amount`）で扱う
 - `any` の使用は禁止
 
 ## MUI の活用
+
 - `sx` プロパティの多用は禁止
 - `styled` 関数を使用する
 
 ## データ処理
+
 - ロジックは純粋関数として分離する
 - PSV 変換などはユーティリティに実装する
 - `|` などのエスケープ処理を必ず行う
 
 ## Storybook 駆動
+
 - Atoms / Molecules は Storybook 対応必須
 - `beforeEach` で Hooks をモックする
 - 表示パターンを網羅する

@@ -39,38 +39,60 @@ export const useMFUploader = (): MFUploaderResult => {
     setIsParsing(true);
     setError(null);
 
-    // CSV解析
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      encoding: 'Shift_JIS', 
-      complete: (results) => {
-        // 構造検証
-        const validated = mfCsvFileSchema.safeParse(results.data);
-        
-        if (validated.success) {
-          // DataGrid用に各行へIDを付与してステートを更新
-          const formattedData: Transaction[] = validated.data.map((row, index) => ({
-            ...row,
-            // ファイル名、インデックス、タイムスタンプを組み合わせて一意性を確保
-            id: `${file.name}-${index}-${Date.now()}`,
-          }));
+    // FileReader でテキストとして読み込んでから PapaParse で解析する
+    // （ブラウザ上で Shift_JIS 等の文字コードを扱うため）
+    const reader = new FileReader();
 
-          setData(formattedData);
-          setError(null);
-        } else {
-          // バリデーション失敗時の処理
-          setError("CSVの形式が正しくありません。カラム名などを確認してください。");
-          console.error('[Schema Validation Error]:', validated.error);
-        }
-        setIsParsing(false);
-      },
-      error: (err) => {
-        setError("ファイルの読み込み中に問題が発生しました。");
-        console.error('[PapaParse Error]:', err);
+    reader.onload = () => {
+      try {
+        const text = typeof reader.result === 'string' ? reader.result : '';
+
+        // CSV解析
+        Papa.parse(text, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            // 構造検証
+            const validated = mfCsvFileSchema.safeParse(results.data);
+
+            if (validated.success) {
+              // DataGrid用に各行へIDを付与してステートを更新
+              const formattedData: Transaction[] = validated.data.map((row, index) => ({
+                ...row,
+                // ファイル名、インデックス、タイムスタンプを組み合わせて一意性を確保
+                id: `${file.name}-${index}-${Date.now()}`,
+              }));
+
+              setData(formattedData);
+              setError(null);
+            } else {
+              // バリデーション失敗時の処理
+              setError('CSVの形式が正しくありません。カラム名などを確認してください。');
+              console.error('[Schema Validation Error]:', validated.error);
+            }
+            setIsParsing(false);
+          },
+          error: (err: unknown) => {
+            setError('ファイルの読み込み中に問題が発生しました。');
+            console.error('[PapaParse Error]:', err);
+            setIsParsing(false);
+          },
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error occurred';
+        setError(`ファイルの読み込みに失敗しました: ${message}`);
+        console.error('[FileReader/Parse Error]:', err);
         setIsParsing(false);
       }
-    });
+    };
+
+    reader.onerror = () => {
+      setError('ファイルの読み込みに失敗しました。');
+      console.error('[FileReader Error]:', reader.error);
+      setIsParsing(false);
+    };
+
+    reader.readAsText(file, 'Shift_JIS');
   };
 
   return { handleFileSelect, data, error, isParsing };
