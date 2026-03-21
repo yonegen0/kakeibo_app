@@ -10,6 +10,8 @@ import { sb } from 'storybook/test';
 
 sb.mock(import('../src/hooks/useMFUploader.ts'), { spy: true });
 sb.mock(import('../src/hooks/useAIAnalyzer.ts'), { spy: true });
+sb.mock(import('../src/hooks/useTransactionAutoAnalyzer.ts'), { spy: true });
+sb.mock(import('../src/hooks/useTransactionSummary.ts'), { spy: true });
 
 /**
  * Storybook全体に適用されるレンダリング設定。

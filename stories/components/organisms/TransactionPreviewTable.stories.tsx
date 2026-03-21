@@ -1,13 +1,13 @@
 /**
  * @file TransactionPreviewTable.stories.tsx
  * @description TransactionPreviewTableコンポーネントの表示確認用ストーリー。
- * useAIAnalyzer Hooksをモック化し、解析中やエラー時の挙動を網羅。
+ * useTransactionAutoAnalyzer Hooksをモック化し、解析中やエラー時の挙動を網羅。
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { TransactionPreviewTable } from '@/components/organisms/TransactionPreviewTable';
 import { mocked, fn } from 'storybook/test';
-import * as AIAnalyzerModule from '@/hooks/useAIAnalyzer';
-import { TransactionModel } from '@/models/TransactionModel';
+import { TransactionPreviewTable } from '@/components/organisms/TransactionPreviewTable';
+import * as AutoAnalyzerModule from '@/hooks/useTransactionAutoAnalyzer';
+import type { TransactionModel } from '@/models/TransactionModel';
 
 /**
  * テスト用のダミーデータ
@@ -73,7 +73,7 @@ type Story = StoryObj<typeof TransactionPreviewTable>;
  */
 export const Default: Story = {
   beforeEach: () => {
-    mocked(AIAnalyzerModule.useAIAnalyzer).mockReturnValue({
+    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
       analyzeTransactions: fn(),
       isAnalyzing: false,
       error: null,
@@ -88,7 +88,7 @@ export const Default: Story = {
  */
 export const Analyzing: Story = {
   beforeEach: () => {
-    mocked(AIAnalyzerModule.useAIAnalyzer).mockReturnValue({
+    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
       analyzeTransactions: fn(),
       isAnalyzing: true, // 解析フラグをON
       error: null,
@@ -110,7 +110,7 @@ export const Analyzed: Story = {
     })),
   },
   beforeEach: () => {
-    mocked(AIAnalyzerModule.useAIAnalyzer).mockReturnValue({
+    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
       analyzeTransactions: fn(),
       isAnalyzing: false,
       error: null,
@@ -124,7 +124,7 @@ export const Analyzed: Story = {
  */
 export const AnalysisError: Story = {
   beforeEach: () => {
-    mocked(AIAnalyzerModule.useAIAnalyzer).mockReturnValue({
+    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
       analyzeTransactions: fn(),
       isAnalyzing: false,
       error: 'AWS Bedrockのリクエスト上限に達しました。しばらく待ってから再試行してください。',
@@ -141,7 +141,7 @@ export const Empty: Story = {
     rows: [],
   },
   beforeEach: () => {
-    mocked(AIAnalyzerModule.useAIAnalyzer).mockReturnValue({
+    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
       analyzeTransactions: fn(),
       isAnalyzing: false,
       error: null,
