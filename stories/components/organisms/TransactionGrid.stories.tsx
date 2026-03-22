@@ -5,6 +5,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { TransactionGrid } from '@/components/organisms/TransactionGrid';
 import type { TransactionModel } from '@/models/TransactionModel';
+import { TransactionAutoAnalyzeToolbar } from '@/components/molecules/TransactionAutoAnalyzeToolbar';
 
 const mockRows: TransactionModel[] = [
   {
@@ -60,7 +61,13 @@ export const Default: Story = {};
  */
 export const WithToolbar: Story = {
   args: {
-    toolbarNode: <div>AI解析ボタン</div>,
+    toolbarNode: (
+      <TransactionAutoAnalyzeToolbar
+      onAnalyze={() => {}}
+      isAnalyzing={false}
+      hasData={true}
+      />
+    ),
   },
 };
 

@@ -8,7 +8,6 @@ import type { TransactionModel } from '@/models/TransactionModel';
 import { useTransactionAutoAnalyzer } from '@/hooks/useTransactionAutoAnalyzer';
 import { TransactionAutoAnalyzeToolbar } from '@/components/molecules/TransactionAutoAnalyzeToolbar';
 import { TransactionGrid } from '@/components/organisms/TransactionGrid';
-import { TransactionTable, type TransactionTableProps } from '@/components/organisms/TransactionTable';
 
 /* --- Types --- */
 /**

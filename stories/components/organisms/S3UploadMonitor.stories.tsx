@@ -20,7 +20,7 @@ export default meta;
 type Story = StoryObj<typeof S3UploadMonitor>;
 
 /**
- * 💡 Default: 初期状態
+ * Default: 初期状態
  * ファイルが選択される前の、アップロードエリアが表示されている状態。
  */
 export const Default: Story = {
@@ -36,7 +36,7 @@ export const Default: Story = {
 };
 
 /**
- * 💡 Processing: 解析中状態
+ * Processing: 解析中状態
  * ファイル選択後、バックエンド（またはWorker）で解析を行っている最中の表示。
  */
 export const Processing: Story = {
@@ -51,7 +51,7 @@ export const Processing: Story = {
 };
 
 /**
- * 💡 Success: 解析成功状態
+ * Success: 解析成功状態
  * CSVデータのバリデーションが完了し、件数などのサマリーが表示されている状態。
  */
 export const Success: Story = {
@@ -66,7 +66,7 @@ export const Success: Story = {
 };
 
 /**
- * 💡 ValidationError: エラー発生状態
+ * ValidationError: エラー発生状態
  * ファイル形式やバリデーションエラーが発生し、ユーザーに通知されている状態。
  */
 export const ValidationError: Story = {

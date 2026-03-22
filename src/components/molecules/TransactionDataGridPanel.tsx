@@ -93,17 +93,11 @@ const StyledDataGrid = styled(DataGrid<TransactionModel>)(({ theme }) => ({
 export const TransactionDataGridPanel = (props: TransactionDataGridPanelProps) => {
   return (
     <StyledTableContainer elevation={0}>
+      {props.toolbarNode}
       <StyledDataGridWrapper $height={props.height}>
         <StyledDataGrid
           rows={props.rows}
           columns={props.columns}
-          slots={
-            props.toolbarNode
-              ? {
-                  toolbar: () => props.toolbarNode,
-                }
-              : undefined
-          }
           loading={props.loading ?? false}
           pageSizeOptions={[10, 25, 50]}
           initialState={{

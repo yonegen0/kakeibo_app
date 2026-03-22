@@ -4,6 +4,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { TransactionDataGridPanel } from '@/components/molecules/TransactionDataGridPanel';
+import { TransactionAutoAnalyzeToolbar } from '@/components/molecules/TransactionAutoAnalyzeToolbar';
 import type { TransactionModel } from '@/models/TransactionModel';
 import { getTransactionDataGridColumns } from '@/lib/transactionDataGridColumns';
 
@@ -59,6 +60,22 @@ type Story = StoryObj<typeof TransactionDataGridPanel>;
  * 取引明細データをDataGridで表示。編集可能な列と固定列が混在。
  */
 export const Default: Story = {};
+
+/**
+ * WithToolbar: AI解析ツールバー付き状態
+ * AI自動仕訳ボタンが付いたツールバーが表示された状態。
+ */
+export const WithToolbar: Story = {
+  args: {
+    toolbarNode: (
+      <TransactionAutoAnalyzeToolbar
+        onAnalyze={() => {}}
+        isAnalyzing={false}
+        hasData={true}
+      />
+    ),
+  },
+};
 
 /**
  * Loading: 読み込み中状態

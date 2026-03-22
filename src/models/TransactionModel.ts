@@ -23,6 +23,13 @@ export type TransactionModel = {
   content: string;          // 取引内容
   category: string;         // 大項目（例：食費）
   subCategory: string;      // 中項目（例：ランチ）を追加
+  /**
+   * CSV由来のフラグ（集計の除外判定に利用）
+   * - `isCalculated === false` は除外
+   * - `isTransfer === true` は除外
+   */
+  isCalculated?: boolean;
+  isTransfer?: boolean;
   isFixedCost: boolean;     // 固定費フラグ
   memo: string;             // 解析理由や補足メモを追加
   source: 'moneyforward';   // 取り込み元
@@ -31,10 +38,13 @@ export type TransactionModel = {
 /** 月次集計モデル */
 export type MonthlySummaryModel = {
   month: string;            // YYYY-MM
-  totalAmount: number;
+  incomeTotal: number;
+  expenseTotal: number;
+  balance: number;
   categories: {
     name: string;
-    amount: number;
+    amount: number;        // 正の金額（収入/支出いずれも絶対値）
     percentage: number;
+    kind: 'income' | 'expense';
   }[];
 };

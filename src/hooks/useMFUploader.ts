@@ -26,6 +26,7 @@ export type MFUploaderResult = {
 
 /**
  * 外部から取り込まれる取引データのパース、スキーマ検証、およびUI向け整形を提供します。
+ * @returns `handleFileSelect`（ファイル選択）と、検証結果 `data`/`error`、解析中フラグ `isParsing`
  */
 export const useMFUploader = (): MFUploaderResult => {
   const [data, setData] = useState<Transaction[] | null>(null);
