@@ -2,7 +2,6 @@
  * @file MarkdownRenderer.tsx
  * @description AI レポートなど Markdown テキストを安全に描画する Atom。
  */
-import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';

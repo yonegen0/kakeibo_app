@@ -4,12 +4,13 @@
  * 表示ブロックは Molecule に分割する。
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import type { MonthlySummaryModel } from '@/models/TransactionModel';
 import { SummaryMetricTiles } from '@/components/molecules/SummaryMetricTiles';
 import { SummaryCategoryBreakdown } from '@/components/molecules/SummaryCategoryBreakdown';
 import { SummaryCardHeader } from '@/components/molecules/SummaryCardHeader';
+import { EmptyState } from '@/components/atoms/EmptyState';
 
 /**
  * SummaryCard の Props
@@ -47,13 +48,6 @@ const StyledRootInner = styled(Box)(({ theme }) => ({
   paddingTop: theme.spacing(3.5),
 }));
 
-/** 空状態テキスト */
-const StyledEmptyState = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  color: theme.palette.text.secondary,
-  fontWeight: 500,
-}));
-
 /* --- Component --- */
 /**
  * 月次の集計結果を表示するカード
@@ -88,7 +82,10 @@ export const SummaryCard = (props: SummaryCardProps) => {
         />
 
         {!summary ? (
-          <StyledEmptyState>集計データがありません</StyledEmptyState>
+          <EmptyState
+            title="集計データがありません"
+            description="CSVの取り込み後に月次サマリーが表示されます。"
+          />
         ) : (
           <>
             <SummaryMetricTiles

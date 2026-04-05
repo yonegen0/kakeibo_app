@@ -37,6 +37,21 @@ console.log('Hello, World!');
 };
 
 /**
+ * RichText: 引用やリストを含む表示
+ */
+export const RichText: Story = {
+  args: {
+    markdown: `## 収支の傾向
+
+> 支出が増えた主因は食費と交通費です。
+
+- 食費の上振れを抑える
+- サブスクを整理する
+- 固定費を月1で見直す`,
+  },
+};
+
+/**
  * Empty: 空のMarkdown
  */
 export const Empty: Story = {
