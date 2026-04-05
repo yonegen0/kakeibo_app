@@ -1,37 +1,19 @@
 /**
  * @file useAIAnalyzer.ts
- * @description 取引明細を AI 解析 API に送信し、結果を管理するためのカスタム Hooks
+ * @description 月次の集計結果を AI レポート API に送信し、AIReportModel を取得する Hooks。
+ * （`useMFUploader` がファイル入力を扱うのに対し、本フックは既に集計済みの `MonthlySummaryModel` を POST する）
  */
-import { useState, useCallback } from 'react';
-import { TransactionModel } from '@/models/TransactionModel';
+import { useCallback, useState } from 'react';
+import type { MonthlySummaryModel } from '@/models/TransactionModel';
+import type { AIReportModel } from '@/models/AIReportModel';
 
-/**
- * API から返却される解析結果の型定義
- * Bedrock からの推論結果をフロントエンドのモデルへマッピングするために使用
- */
-type AnalysisResult = {
-  /** 取引を特定するための一意なID */
-  id: string;
-  /** AIが推論した大項目（例：食費、エンジニアリング） */
-  category: string;
-  /** AIが推論した中項目（例：ランチ、AWS） */
-  subCategory: string;
-  /** 定期的な支出（固定費）であるかどうかの推論結果 */
-  isFixedCost: boolean;
-  /** なぜそのカテゴリを選択したかの推論理由（UIでの補足説明用） */
-  reason: string;
-};
-
-/**
- * useAIAnalyzer の戻り値の型定義
- * コンポーネント側で利用する状態と関数を定義
- */
+/** AI レポート API の実行状態と結果を定義する型 */
 type UseAIAnalyzerReturn = {
   /**
-   * 複数の取引明細を一括で解析し、結果をマージした新しい配列を返す非同期関数
-   * @param transactions 解析対象の取引明細リスト
+   * 月次サマリーを解析し、AIレポートを取得する
+   * @param summary 解析対象の月次集計
    */
-  analyzeTransactions: (transactions: TransactionModel[]) => Promise<TransactionModel[]>;
+  analyzeSummary: (summary: MonthlySummaryModel) => Promise<AIReportModel | null>;
   /** AI解析（API通信）が実行中かどうかを示すフラグ */
   isAnalyzing: boolean;
   /** 解析中に発生したエラーメッセージ（エラーがない場合は null） */
@@ -39,71 +21,47 @@ type UseAIAnalyzerReturn = {
 };
 
 /**
- * AI 解析を実行し、取引データに解析結果を統合する Hooks
- * @returns {UseAIAnalyzerReturn} 解析関数とステータス
+ * 月次サマリーを `/api/ai-report` に送り、Markdown 含むレポートを取得します。
+ * @returns `analyzeSummary` と、通信状態 `isAnalyzing` / `error`
  */
 export const useAIAnalyzer = (): UseAIAnalyzerReturn => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * 取引明細を AI 解析にかけ、結果をマージした新しい配列を返す
-   * @param transactions 解析対象の取引明細リスト
-   * @returns 解析結果が反映された取引明細リスト
+   * 集計1件分をレポート生成 API に渡し、成功時は `AIReportModel` を返す
    */
-  const analyzeTransactions = useCallback(async (
-    transactions: TransactionModel[]
-  ): Promise<TransactionModel[]> => {
+  const analyzeSummary = useCallback(async (summary: MonthlySummaryModel) => {
     setIsAnalyzing(true);
     setError(null);
 
     try {
-      // API Route (/api/analyze) へ解析リクエストを送信
-      const response = await fetch('/api/analyze', {
+      // モック／将来の Bedrock 実装を吸収する API Route（`ai-report/route.ts`）
+      const response = await fetch('/api/ai-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transactions }),
+        body: JSON.stringify({ summary }),
       });
 
       if (!response.ok) {
-        throw new Error(`Analysis failed: ${response.statusText}`);
+        throw new Error(`AI report failed: ${response.statusText}`);
       }
 
-      const data: { analysis: AnalysisResult[] } = await response.json();
-
-      /**
-       * 元のデータと AI の解析結果を ID をキーにしてマージ
-       * 不変性を保つため、常に新しいオブジェクト配列を生成
-       */
-      const updatedTransactions = transactions.map((t) => {
-        const result = data.analysis.find((res) => res.id === t.id);
-        
-        if (!result) return t;
-
-        return {
-          ...t,
-          category: result.category,
-          subCategory: result.subCategory,
-          isFixedCost: result.isFixedCost,
-          memo: result.reason,
-          amount: { ...t.amount },
-        };
-      });
-
-      return updatedTransactions;
-
+      const data: { report: AIReportModel } = await response.json();
+      return data.report;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(message);
-      console.error('AI Analysis Error:', message);
-      return transactions; // 失敗時はフォールバックとして元のデータを返却
+      console.error('AI Report Error:', message);
+      // 失敗時は null（呼び出し側で既存表示を維持しやすい）
+      return null;
     } finally {
       setIsAnalyzing(false);
     }
   }, []);
 
   return {
-    analyzeTransactions,
+    analyzeSummary,
     isAnalyzing,
     error,
   };
