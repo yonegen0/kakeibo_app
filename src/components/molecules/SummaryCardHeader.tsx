@@ -1,6 +1,6 @@
 /**
  * @file SummaryCardHeader.tsx
- * @description 月次サマリーカードのヘッダー（ラベル・タイトル・月選択）を担う Molecule。
+ * @description サマリーカード上部のラベル・見出し・月の切り替え。
  */
 import { useId } from 'react';
 import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
@@ -11,15 +11,15 @@ import { styled } from '@mui/material/styles';
  * SummaryCardHeader の Props
  */
 type SummaryCardHeaderProps = {
-  /** 上部の小さなラベル（例: Insights） */
+  /** 見出しの上の小さなラベル */
   eyebrowText: string;
-  /** メインタイトル */
+  /** ブロックのタイトル */
   title: string;
-  /** 選択可能な月（YYYY-MM） */
+  /** 選べる月の一覧（年月の文字列） */
   monthOptions: string[];
-  /** 現在選択中の月 */
+  /** いま選んでいる月 */
   selectedMonth: string;
-  /** 月変更ハンドラ */
+  /** 月が変わったとき */
   onMonthChange: (month: string) => void;
 };
 
@@ -37,7 +37,7 @@ const StyledCardHeader = styled(Box)(({ theme }) => ({
 /** タイトル周りのブロック */
 const StyledTitleBlock = styled(Box)(() => ({}));
 
-/** 上部の小さいラベル（Eyebrow） */
+/** 上段の小ラベル */
 const StyledEyebrow = styled(Typography)(({ theme }) => ({
   fontSize: '0.7rem',
   fontWeight: 700,
@@ -54,7 +54,7 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-/** 月選択用のフォームコントロール */
+/** 月プルダウン */
 const StyledMonthFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 168,
   '& .MuiOutlinedInput-root': {

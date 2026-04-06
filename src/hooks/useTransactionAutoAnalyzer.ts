@@ -1,12 +1,11 @@
 /**
  * @file useTransactionAutoAnalyzer.ts
- * @description 取引明細を AI 解析 API に送信し、結果を取引データへ統合するためのカスタム Hooks。
- *//**
- * @file useTransactionAutoAnalyzer.ts
- * @description 取引明細を AI 解析 API に送信し、結果を管理するためのカスタム Hooks
- */import { useState, useCallback } from 'react';
+ * @description 取引一覧を AI に渡し、返ってきたカテゴリ・メモなどを各行に反映した一覧を返す。
+ */
+import { useState, useCallback } from 'react';
 import type { TransactionModel } from '@/models/TransactionModel';
 
+/** サーバーが返す 1 件分の仕訳提案 */
 type AnalysisResult = {
   /** 取引を特定するための一意なID */
   id: string;
@@ -20,37 +19,33 @@ type AnalysisResult = {
   isFixedCost: boolean;
 };
 
+/** 自動仕訳リクエストの進行状況と結果 */
 type UseTransactionAutoAnalyzerReturn = {
   /**
-   * 複数の取引明細を一括で解析し、結果をマージした新しい配列を返す非同期関数
-   * @param transactions 解析対象の取引明細リスト
+   * 一覧をまとめて AI にかけ、反映後の一覧を返す
+   * @param transactions 元になる取引一覧
    */
   analyzeTransactions: (transactions: TransactionModel[]) => Promise<TransactionModel[]>;
-  /** AI解析（API通信）が実行中かどうかを示すフラグ */
+  /** サーバー応答待ちかどうか */
   isAnalyzing: boolean;
-  /** 解析中に発生したエラーメッセージ（エラーがない場合は null） */
+  /** 直近の失敗理由（なければ null） */
   error: string | null;
 };
 
 /**
- * 取引明細を AI 解析 API に送信し、取引データへ統合する Hooks
- * @returns 解析実行関数 `analyzeTransactions` と状態フラグ `isAnalyzing` / `error`
+ * 取引一覧の AI 自動仕訳
+ * @returns 一括実行と進捗・エラー
  */
 export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * 取引明細を AI 解析にかけ、結果をマージした新しい配列を返す
-   * @param transactions 解析対象の取引明細リスト
-   * @returns 解析結果が反映された取引明細リスト
-   */
   const analyzeTransactions = useCallback(async (transactions: TransactionModel[]) => {
     setIsAnalyzing(true);
     setError(null);
 
     try {
-      // API Route (/api/analyze) へ解析リクエストを送信
+      // 自動仕訳用のバックエンドへ送る
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -63,10 +58,7 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
 
       const data: { analysis: AnalysisResult[] } = await response.json();
 
-      /**
-       * 元のデータと AI の解析結果を ID をキーにしてマージ
-       * 不変性を保つため、常に新しいオブジェクト配列を生成
-       */
+      // 同じ取引どうしを突き合わせ、提案内容をマージ（配列は毎回新しく作る）
       const updatedTransactions = transactions.map((t) => {
         const result = data.analysis.find((res) => res.id === t.id);
         if (!result) return t;
@@ -86,7 +78,8 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
       const message = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(message);
       console.error('AI Analysis Error:', message);
-      return transactions; // 失敗時はフォールバックとして元のデータを返却
+      // 失敗時は入力の一覧をそのまま返し、画面を止めない
+      return transactions;
     } finally {
       setIsAnalyzing(false);
     }
@@ -98,4 +91,3 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
     error,
   };
 };
-

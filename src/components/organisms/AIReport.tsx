@@ -1,6 +1,6 @@
 /**
  * @file AIReport.tsx
- * @description AI が生成した家計レポート（AIReportModel）を表示する Organism。
+ * @description AI が出した家計レポート（要約・本文つき）をカードで表示する。
  */
 import { Box, Chip, Paper, Typography, CircularProgress, Alert } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
@@ -32,12 +32,15 @@ const successPulse = keyframes`
   100% { transform: scale(1); }
 `;
 
+/**
+ * AIReport の Props
+ */
 type AIReportProps = {
-  /** 表示対象のレポート（null の場合は未生成） */
+  /** レポート内容（まだ無いときは null） */
   report: AIReportModel | null;
-  /** AIレポート生成中かどうか */
+  /** 取得中かどうか */
   isLoading: boolean;
-  /** 生成中に発生したエラー（なければ null） */
+  /** 失敗時のメッセージ（なければ null） */
   error: string | null;
 };
 

@@ -1,6 +1,6 @@
 /**
  * @file MarkdownRenderer.tsx
- * @description AI レポートなど Markdown テキストを安全に描画する Atom。
+ * @description レポート本文など、Markdown をそのまま読みやすく表示する。
  */
 import ReactMarkdown from 'react-markdown';
 import { Box } from '@mui/material';
@@ -11,8 +11,11 @@ import { styled } from '@mui/material/styles';
 /**
  * MarkdownRenderer コンポーネントのプロップス定義
  */
+/**
+ * MarkdownRenderer の Props
+ */
 type MarkdownRendererProps = {
-  /** 描画対象の Markdown テキスト */
+  /** 表示するソース文字列 */
   markdown: string;
 };
 
@@ -82,8 +85,8 @@ const StyledMarkdown = styled(Box)(({ theme }) => ({
 }));
 
 /**
- * Markdown テキストをスタイル付きで描画する
- * @param props.markdown 描画対象の Markdown
+ * Markdown 本文をスタイル付きで描画する
+ * @param props.markdown 描画する Markdown 本文
  * @returns Markdown 表示用の要素
  */
 export const MarkdownRenderer = (props: MarkdownRendererProps) => (

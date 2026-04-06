@@ -1,6 +1,6 @@
 /**
  * @file EmptyState.tsx
- * @description 汎用の空状態表示を行う Atom。
+ * @description まだデータが無いときの案内（タイトル＋任意の説明）。
  */
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -10,9 +10,9 @@ import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
  * EmptyState の Props
  */
 type EmptyStateProps = {
-  /** タイトル文言 */
+  /** 短い見出し */
   title: string;
-  /** 補足文言（任意） */
+  /** 詳しい説明（なくてもよい） */
   description?: string;
 };
 

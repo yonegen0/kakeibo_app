@@ -1,63 +1,60 @@
 /**
  * @file useMFUploader.ts
- * @description 取引明細ファイルの読み込み、バリデーション、および表示用IDの付与を一括管理するカスタムフック。
+ * @description 家計用 CSV の読み込み・形式チェックと、一覧で行を識別するための一意キー付け。
  */
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { mfCsvFileSchema, type MfCsvData } from '@/schemas/mfCsvFileSchema';
 
-/** * テーブル表示用にIDを付与した取引データの型 
+/**
+ * CSV から取り込んだ取引 1 件（一覧用の識別子つき）
  */
 export type Transaction = MfCsvData[number] & {
   id: string;
 };
 
-/** ファイルアップロード処理の実行状態と結果を定義する型 */
+/** 取込処理の進捗と結果 */
 export type MFUploaderResult = {
-  /** 指定されたファイルの読み込み処理を開始するハンドラー */
+  /** ファイル選択から取込・検証まで開始する */
   handleFileSelect: (file: File) => void;
-  /** DataGridでの表示に適した（ID付与済み）取引明細データ */
+  /** 問題なければ取引の配列、まだなら null */
   data: Transaction[] | null;
-  /** エラー内容 */
+  /** ユーザー向けのエラー文 */
   error: string | null;
-  /** 解析および検証中フラグ */
+  /** 読み取り・検証中かどうか */
   isParsing: boolean;
 };
 
 /**
- * 外部から取り込まれる取引データのパース、スキーマ検証、およびUI向け整形を提供します。
- * @returns `handleFileSelect`（ファイル選択）と、検証結果 `data`/`error`、解析中フラグ `isParsing`
+ * CSV 取込の入口。パース後に定義済みルールで検証し、一覧用キーを各行に付ける。
+ * @returns 開始用の関数と、データ・エラー・処理中フラグ
  */
 export const useMFUploader = (): MFUploaderResult => {
   const [data, setData] = useState<Transaction[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isParsing, setIsParsing] = useState(false);
 
-  /**
-   * CSVをパースし、Zodによる検証を経て、各行に一意のIDを付与します。
-   */
   const handleFileSelect = (file: File) => {
     setIsParsing(true);
     setError(null);
 
-    // FileReader でテキストとして読み込んでから PapaParse で解析する
-    // （ブラウザ上で Shift_JIS 等の文字コードを扱うため）
+    // 文字コードを扱うため、いったんテキストとして読んでから表形式に分解する
     const reader = new FileReader();
 
     reader.onload = () => {
       try {
         const text = typeof reader.result === 'string' ? reader.result : '';
 
-        // CSV解析
+        // 行・列に分解
         Papa.parse(text, {
           header: true,
           skipEmptyLines: true,
           complete: (results) => {
-            // 構造検証
+            // 期待する列と型で検証
             const validated = mfCsvFileSchema.safeParse(results.data);
 
             if (validated.success) {
-              // DataGrid用に各行へIDを付与してステートを更新
+              // 一覧で行を区別できるよう、各行に一意のキーを付けて保持する
               const formattedData: Transaction[] = validated.data.map((row, index) => ({
                 ...row,
                 // ファイル名、インデックス、タイムスタンプを組み合わせて一意性を確保

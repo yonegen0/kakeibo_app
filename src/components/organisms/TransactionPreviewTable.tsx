@@ -1,7 +1,6 @@
 /**
  * @file TransactionPreviewTable.tsx
- * @description AI解析機能（自動仕訳）を備えた、取引明細データ表示用の DataGrid コンポーネント。
- * レイアウト・グリッド本体は `TransactionGrid` / Molecule に分割する。
+ * @description 自動仕訳ボタン付きの取引プレビュー表。
  */
 
 import type { TransactionModel } from '@/models/TransactionModel';
@@ -14,11 +13,11 @@ import { TransactionGrid } from '@/components/organisms/TransactionGrid';
  * TransactionPreviewTable の Props
  */
 type TransactionPreviewTableProps = {
-  /** 表示対象の取引データ（配列） */
+  /** 表に出す取引 */
   rows: TransactionModel[];
-  /** データ更新時のコールバック（AI解析結果の反映用） */
+  /** 仕訳後の一覧を親に返す */
   onDataUpdate: (newRows: TransactionModel[]) => void;
-  /** テーブル全体の高さ (デフォルト 600) */
+  /** 表の高さ */
   height?: number | string;
 };
 
@@ -33,9 +32,7 @@ type TransactionPreviewTableProps = {
 export const TransactionPreviewTable = (props: TransactionPreviewTableProps) => {
   const { analyzeTransactions, isAnalyzing } = useTransactionAutoAnalyzer();
 
-  /**
-   * AI解析ボタン押下時の実行ロジック
-   */
+  /** ボタンから一括仕訳を走らせる */
   const handleAIAnalyze = async () => {
     const updatedData = await analyzeTransactions(props.rows);
     props.onDataUpdate(updatedData);

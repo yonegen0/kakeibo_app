@@ -1,7 +1,6 @@
 /**
  * @file SummaryCard.tsx
- * @description 月次の集計結果（合計収入/支出/残高、カテゴリ別内訳）を表示する Organism。
- * 表示ブロックは Molecule に分割する。
+ * @description 月ごとの収支合計とカテゴリ内訳をまとめたカード。見出し・数値・内訳は下位部品に分ける。
  */
 import { useEffect, useMemo, useState } from 'react';
 import { Box, Paper } from '@mui/material';
@@ -16,7 +15,7 @@ import { EmptyState } from '@/components/atoms/EmptyState';
  * SummaryCard の Props
  */
 type SummaryCardProps = {
-  /** 集計結果（月次の一覧） */
+  /** 月ごとのサマリー（複数月あれば切り替え可能） */
   summaries: MonthlySummaryModel[];
 };
 
@@ -50,9 +49,9 @@ const StyledRootInner = styled(Box)(({ theme }) => ({
 
 /* --- Component --- */
 /**
- * 月次の集計結果を表示するカード
- * @param props.summaries 集計結果（月次一覧）
- * @returns SummaryCard 表示要素
+ * 月次の家計サマリーを表示するカード
+ * @param props.summaries 月ごとの家計サマリー一覧
+ * @returns サマリーカード表示要素
  */
 export const SummaryCard = (props: SummaryCardProps) => {
   const monthOptions = useMemo(

@@ -1,6 +1,6 @@
 /**
  * @file SummaryCategoryBreakdown.tsx
- * @description 月次サマリーのカテゴリ別内訳リストを表示する Molecule。
+ * @description カテゴリごとの金額と割合をリスト＋バーで見せる。
  */
 
 import { alpha, styled } from '@mui/material/styles';
@@ -14,7 +14,7 @@ import { toYenAmount } from '@/lib/toYenAmount';
  * SummaryCategoryBreakdown の Props
  */
 type SummaryCategoryBreakdownProps = {
-  /** 表示するカテゴリ行（上位N件は呼び出し側で絞ってもよい） */
+  /** 内訳の行（件数は呼び出し側で絞ってもよい） */
   categories: MonthlySummaryModel['categories'];
 };
 

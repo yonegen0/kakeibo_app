@@ -1,6 +1,6 @@
 /**
  * @file S3UploadMonitor.tsx
- * @description ファイル入力の受け付け、および解析状況に応じた視覚的フィードバックを提供するモニターコンポーネント。
+ * @description CSV の選択と、取込・検証の進み具合（待ち／処理中／成功／失敗）を見せる。
  */
 import { Box, Typography, Paper, LinearProgress, Alert, AlertTitle, Button, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -12,18 +12,18 @@ import { useMFUploader } from '@/hooks/useMFUploader';
 /* --- Types --- */
 
 /**
- * コンポーネントのプロップス定義
+ * S3UploadMonitor の Props
  */
 type S3UploadMonitorProps = {
-  /** コンテナの幅 */
+  /** 枠の幅 */
   width?: string | number;
-  /** コンテナの高さ */
+  /** 枠の高さ */
   height?: string | number;
 };
 
 /* --- Animations --- */
 
-/** 解析中であることを示す鼓動のようなアニメーション */
+/** 処理中であることを示す鼓動アニメーション */
 const pulse = keyframes`
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.05); opacity: 0.8; }
@@ -101,23 +101,26 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
 
 /**
  * データの取り込みから検証結果までを可視化するモニターコンポーネント。
+ * @param props.width コンテナの幅
+ * @param props.height コンテナの高さ
+ * @returns アップロード状態表示用の要素
  */
 export const S3UploadMonitor = (props: S3UploadMonitorProps) => {
   const { handleFileSelect, data, error, isParsing } = useMFUploader();
 
-  /** 非表示のファイルインプットを擬似的にクリックするハンドラー */
+  /** 隠したファイル選択を開く */
   const onButtonClick = () => {
     document.getElementById('csv-upload-input')?.click();
   };
 
-  /** ファイルが選択された際の処理：Hooksの解析ロジックを呼び出す */
+  /** 選ばれたファイルで取込を開始 */
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleFileSelect(e.target.files[0]);
     }
   };
 
-  /** 画面をリロードして状態を初期化する */
+  /** 画面を最初からやり直す */
   const onReset = () => {
     window.location.reload();
   };

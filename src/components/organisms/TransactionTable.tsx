@@ -1,6 +1,6 @@
 /**
  * @file TransactionTable.tsx
- * @description AI解析ボタンなしで取引明細を表示するテーブルコンポーネント。
+ * @description 取引一覧だけを出す表（自動仕訳ボタンなし）。
  */
 
 import type { TransactionModel } from '@/models/TransactionModel';
@@ -11,9 +11,9 @@ import { TransactionGrid } from './TransactionGrid';
  * TransactionTable の Props（AI なし）
  */
 export type TransactionTableProps = {
-  /** 表示対象の取引データ（配列） */
+  /** 表に並べる取引 */
   rows: TransactionModel[];
-  /** テーブル全体の高さ (デフォルト 600) */
+  /** 表の高さ */
   height?: number | string;
 };
 

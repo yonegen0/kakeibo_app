@@ -1,6 +1,6 @@
 /**
  * @file TransactionTableSectionHeader.tsx
- * @description 取引テーブルブロックのタイトル行（左アクセント＋補足文）を担う Molecule。
+ * @description 取引ブロックの見出し。左に細いライン、横に短い補足を付けられる。
  */
 
 import { Box, Typography } from '@mui/material';
@@ -11,9 +11,9 @@ import { alpha, styled } from '@mui/material/styles';
  * TransactionTableSectionHeader の Props
  */
 type TransactionTableSectionHeaderProps = {
-  /** メインタイトル */
+  /** ブロック名 */
   title: string;
-  /** タイトル横の補足（任意） */
+  /** 横に添える短い説明（なくてもよい） */
   subtitle?: string;
 };
 
@@ -43,7 +43,7 @@ const StyledTitleHint = styled('span')(({ theme }) => ({
 }));
 
 /**
- * テーブルセクション見出し
+ * 取引一覧セクションの見出し
  * @param props.title メインタイトル
  * @param props.subtitle タイトル横の補足（任意）
  * @returns 見出し表示用の要素

@@ -1,42 +1,38 @@
 /**
  * @file useAIAnalyzer.ts
- * @description 月次の集計結果を AI レポート API に送信し、AIReportModel を取得する Hooks。
- * （`useMFUploader` がファイル入力を扱うのに対し、本フックは既に集計済みの `MonthlySummaryModel` を POST する）
+ * @description 月次サマリーを渡して AI 家計レポート（要約・本文など）を取得する。
  */
 import { useCallback, useState } from 'react';
 import type { MonthlySummaryModel } from '@/models/TransactionModel';
 import type { AIReportModel } from '@/models/AIReportModel';
 
-/** AI レポート API の実行状態と結果を定義する型 */
+/** レポート取得の進行状況と結果 */
 type UseAIAnalyzerReturn = {
   /**
-   * 月次サマリーを解析し、AIレポートを取得する
-   * @param summary 解析対象の月次集計
+   * 指定月のサマリーからレポートを取得する
+   * @param summary 対象月の収支サマリー
    */
   analyzeSummary: (summary: MonthlySummaryModel) => Promise<AIReportModel | null>;
-  /** AI解析（API通信）が実行中かどうかを示すフラグ */
+  /** サーバー応答待ちかどうか */
   isAnalyzing: boolean;
-  /** 解析中に発生したエラーメッセージ（エラーがない場合は null） */
+  /** 直近の失敗理由（なければ null） */
   error: string | null;
 };
 
 /**
- * 月次サマリーを `/api/ai-report` に送り、Markdown 含むレポートを取得します。
- * @returns `analyzeSummary` と、通信状態 `isAnalyzing` / `error`
+ * 月次サマリーから AI レポートを取りに行く
+ * @returns 取得処理と進捗・エラー
  */
 export const useAIAnalyzer = (): UseAIAnalyzerReturn => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * 集計1件分をレポート生成 API に渡し、成功時は `AIReportModel` を返す
-   */
   const analyzeSummary = useCallback(async (summary: MonthlySummaryModel) => {
     setIsAnalyzing(true);
     setError(null);
 
     try {
-      // モック／将来の Bedrock 実装を吸収する API Route（`ai-report/route.ts`）
+      // レポート生成用のバックエンドへ送る
       const response = await fetch('/api/ai-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -53,7 +49,7 @@ export const useAIAnalyzer = (): UseAIAnalyzerReturn => {
       const message = err instanceof Error ? err.message : 'Unknown error occurred';
       setError(message);
       console.error('AI Report Error:', message);
-      // 失敗時は null（呼び出し側で既存表示を維持しやすい）
+      // 失敗時は null のみ返し、画面は呼び出し元のままにできる
       return null;
     } finally {
       setIsAnalyzing(false);

@@ -1,6 +1,6 @@
 /**
  * @file TransactionAutoAnalyzeToolbar.tsx
- * @description 取引プレビュー用 DataGrid ツールバー（AI 自動仕訳ボタン）を担う Molecule。
+ * @description 取引表の上に出す一行。AI による一括仕訳ボタンを置く。
  */
 
 import { Button, CircularProgress, Toolbar } from '@mui/material';
@@ -12,11 +12,11 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
  * TransactionAutoAnalyzeToolbar の Props
  */
 type TransactionAutoAnalyzeToolbarProps = {
-  /** 解析実行 */
+  /** ボタン押下で仕訳を走らせる */
   onAnalyze: () => void;
-  /** 解析中 */
+  /** 通信中は無効化などに使う */
   isAnalyzing: boolean;
-  /** データ有無 */
+  /** 行が無いときは押せないようにする */
   hasData: boolean;
 };
 
@@ -30,7 +30,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-/** AI 解析実行ボタン */
+/** 一括仕訳ボタン */
 const StyledAIAnalyzeButton = styled(Button)(({ theme }) => ({
   borderRadius: theme.spacing(1.25),
   fontWeight: 700,
@@ -42,9 +42,9 @@ const StyledAIAnalyzeButton = styled(Button)(({ theme }) => ({
 
 /**
  * AI 自動仕訳ツールバー
- * @param props.onAnalyze 解析実行ハンドラ
- * @param props.isAnalyzing 解析中フラグ
- * @param props.hasData テーブルにデータがあるか
+ * @param props.onAnalyze 自動仕訳実行ハンドラ
+ * @param props.isAnalyzing 処理中フラグ
+ * @param props.hasData 取引明細があるか
  * @returns ツールバー表示用の要素
  */
 /* --- Component --- */

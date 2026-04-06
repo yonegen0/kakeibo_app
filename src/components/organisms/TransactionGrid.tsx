@@ -1,7 +1,6 @@
 /**
  * @file TransactionGrid.tsx
- * @description 取引テーブル（DataGrid）ブロックのレイアウトと表示を束ねる Organism 部品。
- * `TransactionTable` / `TransactionPreviewTable` から利用される。
+ * @description 取引一覧の「見出し＋表」ブロック。通常一覧と自動仕訳付きプレビューの両方で使う。
  */
 
 import { Box } from '@mui/material';
@@ -13,16 +12,17 @@ import { TransactionDataGridPanel } from '@/components/molecules/TransactionData
 
 /* --- Types --- */
 /**
- * TransactionGrid の Props（DataGrid 本体ラッパ）
+ * TransactionGrid の Props（取引一覧ブロック）
  */
 export type TransactionGridProps = {
+  /** 表に並べる取引 */
   rows: TransactionModel[];
   height?: number | string;
   loading?: boolean;
-  /** toolbarを表示したい場合のみ渡す（AI解析ボタン等） */
+  /** 表の上に出す任意の一行（例: 自動仕訳ボタン） */
   toolbarNode?: React.ReactNode;
   title: string;
-  /** タイトル横の補足（控えめな説明文） */
+  /** タイトル横の短い説明 */
   subtitle?: string;
 };
 
@@ -37,8 +37,8 @@ const StyledRoot = styled(Box)(({ theme }) => ({
 const columns = getTransactionDataGridColumns();
 
 /**
- * タイトル + DataGrid（ツールバー任意）
- * @param props.rows 表示対象の取引データ
+ * タイトル + 取引一覧 DataGrid（ツールバー任意）
+ * @param props.rows 表示する取引明細
  * @param props.height テーブル高さ
  * @param props.loading DataGrid のローディング状態
  * @param props.toolbarNode toolbar（任意）

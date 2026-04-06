@@ -2,7 +2,7 @@
  * @file src/app/api/ai-report/route.ts
  * @description 月次集計結果を受け取り、AI レポート（AIReportModel）を返すエンドポイント。
  * 現段階ではモックレスポンスを返却し、後から Bedrock 連携に差し替えやすい形にしておく。
- * （`analyze/route.ts` と同様に、入力検証 → 処理 → JSON 返却の流れを踏襲する）
+ * 入力検証 → 処理 → JSON 返却の流れで扱う。
  */
 import { NextResponse } from "next/server";
 import type { MonthlySummaryModel } from "@/models/TransactionModel";
@@ -10,7 +10,7 @@ import type { AIReportModel } from "@/models/AIReportModel";
 
 /**
  * POST ボディの型定義
- * フロントエンドの `useAIAnalyzer` から `summary` のみを受け取る。
+ * フロントエンドから月次集計（`summary`）のみを受け取る。
  */
 type AIReportRequestBody = {
   summary: MonthlySummaryModel;
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     /**
      * ガード句：集計データが無い場合は早期リターン
-     * 400 Bad Request を返し、クライアント側に通知（analyze の「取引なし」と同様の扱い）
+     * 400 Bad Request を返し、クライアント側に通知する
      */
     if (!summary) {
       return NextResponse.json({ error: "summary is required" }, { status: 400 });
@@ -35,8 +35,8 @@ export async function POST(request: Request) {
 
     /**
      * モックレポート：
-     * 本番では `analyze/route.ts` と同様に Bedrock（InvokeModelCommand 等）へ
-     * summary を渡し、Markdown / 構造化フィールドを生成して返す想定。
+     * 本番では Bedrock 等のモデルへ summary を渡し、
+     * Markdown / 構造化フィールドを生成して返す想定。
      */
     const mockReport: AIReportModel = {
       title: `${summary.month} の家計レポート`,
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       ].join("\n"),
     };
 
-    // クライアントは { report: AIReportModel } を受け取る（useAIAnalyzer と整合）
+    // クライアントは { report: AIReportModel } 形式で受け取る
     return NextResponse.json({ report: mockReport });
   } catch (error) {
     /**

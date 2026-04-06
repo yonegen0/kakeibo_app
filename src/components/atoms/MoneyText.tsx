@@ -1,6 +1,6 @@
 /**
  * @file MoneyText.tsx
- * @description 金額（Amount）を表示用の文字列へ整形して描画する Atom。
+ * @description 金額をアプリ共通の書式（桁区切り＋単位）で表示する。
  */
 import { styled } from '@mui/material/styles';
 import type { Amount } from '@/models/TransactionModel';
@@ -10,7 +10,7 @@ import type { Amount } from '@/models/TransactionModel';
  * MoneyText の Props
  */
 type MoneyTextProps = {
-  /** 表示対象の金額 */
+  /** 数値と通貨単位 */
   amount: Amount;
 };
 
@@ -23,8 +23,8 @@ const StyledMoney = styled('span')(({ theme }) => ({
 
 /**
  * 金額の表示を統一する
- * @param props.amount 表示対象の金額
- * @returns 表示用の要素
+ * @param props.amount 表示する金額（数値と単位）
+ * @returns 金額表示用の要素
  */
 /* --- Component --- */
 export const MoneyText = (props: MoneyTextProps) => {

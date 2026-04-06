@@ -1,6 +1,6 @@
 /**
  * @file TransactionDataGridPanel.tsx
- * @description 取引明細用 DataGrid をカード内に配置する Molecule。
+ * @description 取引表をカード状の枠に入れ、列・高さ・待機中・上段スロットをまとめる。
  */
 
 import { Paper } from '@mui/material';
@@ -14,15 +14,15 @@ import type { TransactionModel } from '@/models/TransactionModel';
  * TransactionDataGridPanel の Props
  */
 type TransactionDataGridPanelProps = {
-  /** 行データ */
+  /** 表の行データ */
   rows: TransactionModel[];
-  /** カラム定義 */
+  /** 列の見え方 */
   columns: GridColDef<TransactionModel>[];
-  /** グリッド高さ */
+  /** 表の高さ */
   height?: number | string;
-  /** ローディング */
+  /** データ待ちのとき true */
   loading?: boolean;
-  /** ツールバースロット（任意） */
+  /** 表の上に差し込む任意の UI */
   toolbarNode?: React.ReactNode;
 };
 
@@ -37,7 +37,7 @@ const StyledTableContainer = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-/** DataGrid のラッパー（高さ指定を受ける） */
+/** 表の高さを決める枠 */
 const StyledDataGridWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== '$height',
 })<{ $height?: number | string }>(({ theme, $height }) => ({
@@ -81,8 +81,8 @@ const StyledDataGrid = styled(DataGrid<TransactionModel>)(({ theme }) => ({
 }));
 
 /**
- * DataGrid をカードで包んだパネル
- * @param props.rows 行データ
+ * 取引一覧用 DataGrid をカードで包んだパネル
+ * @param props.rows 取引明細の行
  * @param props.columns カラム定義
  * @param props.height グリッド高さ
  * @param props.loading ローディング状態

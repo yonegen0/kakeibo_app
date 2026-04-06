@@ -1,6 +1,6 @@
 /**
  * @file SummaryMetricTiles.tsx
- * @description 月次サマリーの収入・支出・残高をタイル表示する Molecule。
+ * @description 収入・支出・残高を並べた 3 枚のタイル。
  */
 
 import { Box, Paper, Typography } from '@mui/material';
@@ -13,11 +13,11 @@ import { toYenAmount } from '@/lib/toYenAmount';
  * SummaryMetricTiles の Props
  */
 type SummaryMetricTilesProps = {
-  /** 合計収入 */
+  /** その月の収入合計 */
   incomeTotal: number;
-  /** 合計支出 */
+  /** その月の支出合計 */
   expenseTotal: number;
-  /** 残高 */
+  /** 収支差 */
   balance: number;
 };
 
