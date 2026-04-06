@@ -1,13 +1,27 @@
 # プロジェクト概要
 
 - 言語: TypeScript
-- フレームワーク: React (Next.js アプリケーション、App Router)
-- UI: MUI v5, MUI X DataGrid
-- テスト/ドキュメント: Storybook
-- インフラ/API: AWS SDK v3 (S3, Bedrock)
+- フレームワーク: Next.js (App Router) + React
+- UI: MUI v5 / MUI X DataGrid（`styled` 中心）
+- 開発運用: Storybook で表示パターン確認
+- 主な機能領域:
+  - CSV取り込み（検証 + 画面表示用ID付与）
+  - 取引一覧表示（通常表示 / AI自動仕訳付きプレビュー）
+  - 月次サマリー（収入・支出・残高・カテゴリ内訳）
+  - AI家計レポート（要約 + Markdown本文）
 
-# 情報検索方針
+## 現在の実装方針（要点）
 
-- 必ず公式ドキュメントを参照する（AWS公式ドキュメント[object Object]、Next.js公式ガイド[object Object]、MUI公式サイト[object Object]、Storybook公式チュートリアル[object Object]、TypeScript公式ドキュメント[object Object] など）。
-- 質問に対する回答では、参照元として公式ドキュメントを明示的に挙げる。非公式情報は最後の手段とする。
-- Web検索ツール使用時は、`site:aws.amazon.com` や `site:nextjs.org` など特定ドメインを指定して検索する。
+- `src/components` は Atomic Design 構成（atoms / molecules / organisms / templates）
+- `src/hooks` は UI から分離した責務で実装
+- コンポーネント定義は `React.FC` ではなく `const X = (props: XProps) => {}` を使う
+- コメントは「ファイルを辿らなくても意味が分かる説明」を優先する
+- ただし Components では次の JSDoc 形式を維持する:
+  - `/** X の Props */`
+  - コンポーネント本体に `@param` / `@returns`
+
+## 情報検索方針
+
+- 外部情報が必要な場合は公式ドキュメントを最優先
+- 推測で API 仕様を決めない
+- Web 検索時は公式ドメインを優先（例: `site:nextjs.org`, `site:mui.com`, `site:docs.aws.amazon.com`）
