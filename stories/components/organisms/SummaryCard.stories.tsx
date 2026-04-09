@@ -4,9 +4,9 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { SummaryCard } from '@/components/organisms/SummaryCard';
-import type { MonthlySummaryModel } from '@/models/TransactionModel';
+import type { SummaryModel } from '@/models/TransactionModel';
 
-const summaries: MonthlySummaryModel[] = [
+const summaries: SummaryModel[] = [
   {
     month: '2026-03',
     incomeTotal: 2150,
@@ -17,6 +17,9 @@ const summaries: MonthlySummaryModel[] = [
       { name: 'エンジニアリング', amount: 950, percentage: 44.2, kind: 'income' },
       { name: '生活用品', amount: 600, percentage: 30, kind: 'expense' },
     ],
+    dailyTrend: [{ date: '2026-03-01', income: 2150, expense: 1800, balance: 350 }],
+    topExpenses: [{ id: 't-1', content: '食材', amount: 1200, category: '食費', date: '2026/03/01' }],
+    fixedCosts: [{ id: 't-2', content: '光熱費', amount: 600, category: '生活用品' }],
   },
   {
     month: '2026-02',
@@ -24,6 +27,9 @@ const summaries: MonthlySummaryModel[] = [
     expenseTotal: 500,
     balance: 500,
     categories: [{ name: 'その他', amount: 500, percentage: 50, kind: 'expense' }],
+    dailyTrend: [{ date: '2026-02-01', income: 1000, expense: 500, balance: 500 }],
+    topExpenses: [{ id: 't-3', content: '雑費', amount: 500, category: 'その他', date: '2026/02/01' }],
+    fixedCosts: [],
   },
 ];
 

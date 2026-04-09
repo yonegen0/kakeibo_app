@@ -1,5 +1,5 @@
 /**
- * @file S3UploadMonitor.tsx
+ * @file CsvUploadMonitor.tsx
  * @description CSV の選択と、取込・検証の進み具合（待ち／処理中／成功／失敗）を見せる。
  */
 import { Box, Typography, Paper, LinearProgress, Alert, AlertTitle, Button, CircularProgress } from '@mui/material';
@@ -12,9 +12,9 @@ import { useMFUploader } from '@/hooks/useMFUploader';
 /* --- Types --- */
 
 /**
- * S3UploadMonitor の Props
+ * CsvUploadMonitor の Props
  */
-type S3UploadMonitorProps = {
+export type CsvUploadMonitorProps = {
   /** 枠の幅 */
   width?: string | number;
   /** 枠の高さ */
@@ -35,7 +35,7 @@ const pulse = keyframes`
 /** ルートコンテナ：外部からの指定がない場合はデフォルト幅600pxを適用 */
 const StyledRootContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'width' && prop !== 'height',
-})<S3UploadMonitorProps>(({ theme, width, height }) => ({
+})<CsvUploadMonitorProps>(({ theme, width, height }) => ({
   width: width ?? '100%',
   maxWidth: width ? 'none' : 600,
   height: height ?? 'auto',
@@ -105,7 +105,7 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
  * @param props.height コンテナの高さ
  * @returns アップロード状態表示用の要素
  */
-export const S3UploadMonitor = (props: S3UploadMonitorProps) => {
+export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
   const { handleFileSelect, data, error, isParsing } = useMFUploader();
 
   /** 隠したファイル選択を開く */
@@ -200,3 +200,8 @@ export const S3UploadMonitor = (props: S3UploadMonitorProps) => {
     </StyledRootContainer>
   );
 };
+
+/**
+ * @deprecated CsvUploadMonitor を利用してください。
+ */
+export const S3UploadMonitor = CsvUploadMonitor;

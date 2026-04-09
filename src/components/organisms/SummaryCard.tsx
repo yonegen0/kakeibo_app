@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Box, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import type { MonthlySummaryModel } from '@/models/TransactionModel';
+import type { SummaryModel } from '@/models/TransactionModel';
 import { SummaryMetricTiles } from '@/components/molecules/SummaryMetricTiles';
 import { SummaryCategoryBreakdown } from '@/components/molecules/SummaryCategoryBreakdown';
 import { SummaryCardHeader } from '@/components/molecules/SummaryCardHeader';
@@ -16,7 +16,7 @@ import { EmptyState } from '@/components/atoms/EmptyState';
  */
 type SummaryCardProps = {
   /** 月ごとのサマリー（複数月あれば切り替え可能） */
-  summaries: MonthlySummaryModel[];
+  summaries: SummaryModel[];
 };
 
 /* --- Styled (カード外枠のみ Organism で保持) --- */

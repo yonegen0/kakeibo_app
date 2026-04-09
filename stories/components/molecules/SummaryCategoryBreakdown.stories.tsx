@@ -4,9 +4,9 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import { SummaryCategoryBreakdown } from '@/components/molecules/SummaryCategoryBreakdown';
-import type { MonthlySummaryModel } from '@/models/TransactionModel';
+import type { SummaryModel } from '@/models/TransactionModel';
 
-const categories: MonthlySummaryModel['categories'] = [
+const categories: SummaryModel['categories'] = [
   { name: '食費', amount: 1200, percentage: 60, kind: 'expense' },
   { name: 'エンジニアリング', amount: 950, percentage: 44.2, kind: 'income' },
   { name: '生活用品', amount: 600, percentage: 30, kind: 'expense' },

@@ -1,12 +1,9 @@
 /**
  * @file TransactionPreviewTable.stories.tsx
- * @description TransactionPreviewTableコンポーネントの表示確認用ストーリー。
- * useTransactionAutoAnalyzer Hooksをモック化し、解析中やエラー時の挙動を網羅。
+ * @description [DEPRECATED] TransactionPreviewTable の互換確認ストーリー。
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { mocked, fn } from 'storybook/test';
 import { TransactionPreviewTable } from '@/components/organisms/TransactionPreviewTable';
-import * as AutoAnalyzerModule from '@/hooks/useTransactionAutoAnalyzer';
 import type { TransactionModel } from '@/models/TransactionModel';
 
 /**
@@ -50,7 +47,7 @@ const mockRows: TransactionModel[] = [
 ];
 
 const meta: Meta<typeof TransactionPreviewTable> = {
-  title: 'Organisms/TransactionPreviewTable',
+  title: 'Legacy/TransactionPreviewTable',
   component: TransactionPreviewTable,
   parameters: {
     // データ量が多いコンポーネントのため、余白を広めに確保
@@ -59,7 +56,6 @@ const meta: Meta<typeof TransactionPreviewTable> = {
   // 共通のProps定義
   args: {
     rows: mockRows,
-    onDataUpdate: fn(),
     height: 500,
   },
 };
@@ -72,33 +68,11 @@ type Story = StoryObj<typeof TransactionPreviewTable>;
  * CSVインポート直後、AI解析を実行する前のプレーンなテーブル。
  */
 export const Default: Story = {
-  beforeEach: () => {
-    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
-      analyzeTransactions: fn(),
-      isAnalyzing: false,
-      error: null,
-    });
-  },
-};
-
-/**
- * Analyzing: AI解析実行中
- * AI解析ボタンが押下され、Bedrockからの回答を待機している状態。
- * ボタン内のローディングと、DataGrid全体のLoadingオーバレイが表示される。
- */
-export const Analyzing: Story = {
-  beforeEach: () => {
-    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
-      analyzeTransactions: fn(),
-      isAnalyzing: true, // 解析フラグをON
-      error: null,
-    });
-  },
 };
 
 /**
  * Analyzed: 解析結果反映済み
- * AIによる推論結果が category / subCategory / memo にマッピングされた状態。
+ * 旧フローで整形済みデータを表示する状態。
  */
 export const Analyzed: Story = {
   args: {
@@ -109,42 +83,14 @@ export const Analyzed: Story = {
       memo: '明細内容からAIが自動判別しました',
     })),
   },
-  beforeEach: () => {
-    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
-      analyzeTransactions: fn(),
-      isAnalyzing: false,
-      error: null,
-    });
-  },
-};
-
-/**
- * AnalysisError: APIエラー発生
- * API制限や通信エラーが発生し、ユーザーにエラーが通知されている状態。
- */
-export const AnalysisError: Story = {
-  beforeEach: () => {
-    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
-      analyzeTransactions: fn(),
-      isAnalyzing: false,
-      error: 'AWS Bedrockのリクエスト上限に達しました。しばらく待ってから再試行してください。',
-    });
-  },
 };
 
 /**
  * Empty: データなし
- * 表示対象のデータが0件の状態。ボタンが非活性になり、テーブルが空であることを確認。
+ * 表示対象のデータが0件の状態。
  */
 export const Empty: Story = {
   args: {
     rows: [],
-  },
-  beforeEach: () => {
-    mocked(AutoAnalyzerModule.useTransactionAutoAnalyzer).mockReturnValue({
-      analyzeTransactions: fn(),
-      isAnalyzing: false,
-      error: null,
-    });
   },
 };

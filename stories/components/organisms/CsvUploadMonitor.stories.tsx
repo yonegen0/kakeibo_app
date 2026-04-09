@@ -1,15 +1,15 @@
 /**
- * @file S3UploadMonitor.stories.tsx
- * @description S3UploadMonitorコンポーネントの表示確認用ストーリー。
+ * @file CsvUploadMonitor.stories.tsx
+ * @description CsvUploadMonitor コンポーネントの表示確認用ストーリー。
  */
 import type { Meta, StoryObj } from '@storybook/react';
-import { S3UploadMonitor } from '@/components/organisms/S3UploadMonitor';
+import { CsvUploadMonitor } from '@/components/organisms/CsvUploadMonitor';
 import { mocked, fn } from 'storybook/test';
 import * as MFUploaderModule from '@/hooks/useMFUploader';
 
-const meta: Meta<typeof S3UploadMonitor> = {
-  title: 'Organisms/S3UploadMonitor',
-  component: S3UploadMonitor,
+const meta: Meta<typeof CsvUploadMonitor> = {
+  title: 'Organisms/CsvUploadMonitor',
+  component: CsvUploadMonitor,
   parameters: {
     // コンポーネントが画面端に寄らないよう中央配置
     layout: 'centered',
@@ -17,7 +17,7 @@ const meta: Meta<typeof S3UploadMonitor> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof S3UploadMonitor>;
+type Story = StoryObj<typeof CsvUploadMonitor>;
 
 /**
  * Default: 初期状態

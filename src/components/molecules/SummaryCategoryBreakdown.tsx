@@ -5,7 +5,7 @@
 
 import { alpha, styled } from '@mui/material/styles';
 import { Box, LinearProgress, Typography } from '@mui/material';
-import type { MonthlySummaryModel } from '@/models/TransactionModel';
+import type { SummaryModel } from '@/models/TransactionModel';
 import { MoneyText } from '@/components/atoms/MoneyText';
 import { toYenAmount } from '@/lib/toYenAmount';
 
@@ -15,7 +15,7 @@ import { toYenAmount } from '@/lib/toYenAmount';
  */
 type SummaryCategoryBreakdownProps = {
   /** 内訳の行（件数は呼び出し側で絞ってもよい） */
-  categories: MonthlySummaryModel['categories'];
+  categories: SummaryModel['categories'];
 };
 
 /* --- Styled Components --- */

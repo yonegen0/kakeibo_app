@@ -15,13 +15,13 @@ export type Transaction = MfCsvData[number] & {
 
 /** 取込処理の進捗と結果 */
 export type MFUploaderResult = {
-  /** ファイル選択から取込・検証まで開始する */
+  /** 指定されたファイルの読み込み処理を開始するハンドラー */
   handleFileSelect: (file: File) => void;
-  /** 問題なければ取引の配列、まだなら null */
+  /** DataGridでの表示に適した（ID付与済み）取引明細データ */
   data: Transaction[] | null;
-  /** ユーザー向けのエラー文 */
+  /** エラー内容 */
   error: string | null;
-  /** 読み取り・検証中かどうか */
+  /** 読み取り・検証中フラグ */
   isParsing: boolean;
 };
 
@@ -34,11 +34,15 @@ export const useMFUploader = (): MFUploaderResult => {
   const [error, setError] = useState<string | null>(null);
   const [isParsing, setIsParsing] = useState(false);
 
+  /**
+   * CSVをパースし、Zodによる検証を経て、各行に一意のIDを付与します。
+   */
   const handleFileSelect = (file: File) => {
     setIsParsing(true);
     setError(null);
 
-    // 文字コードを扱うため、いったんテキストとして読んでから表形式に分解する
+    // FileReader でテキストとして読み込んでから PapaParse で解析する
+    // （ブラウザ上で Shift_JIS 等の文字コードを扱うため）
     const reader = new FileReader();
 
     reader.onload = () => {
