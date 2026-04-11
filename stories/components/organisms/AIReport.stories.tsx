@@ -7,10 +7,13 @@ import { AIReport } from '@/components/organisms/AIReport';
 import type { AIReportModel } from '@/models/AIReportModel';
 
 const mockReport: AIReportModel = {
+  reportId: 'rep-story-1',
+  psvId: 'psv-story-1',
   title: '3月の家計分析レポート',
   summary: '今月の支出は前月比10%増加しました。食費と交通費の見直しをおすすめします。',
   highlights: ['食費が予算を超過', '固定費の見直しが必要', '貯蓄目標達成'],
-  rawMarkdown: `# 3月の家計分析レポート
+  promptSnapshot: 'story-prompt',
+  reportMarkdown: `# 3月の家計分析レポート
 
 ## 概要
 今月の総支出は¥150,000で、前月比10%の増加となりました。
@@ -31,6 +34,7 @@ const mockReport: AIReportModel = {
 >差額: ¥10,000 (超過)
 
 `,
+  createdAt: new Date('2026-03-31T10:00:00Z').toISOString(),
 };
 
 const meta: Meta<typeof AIReport> = {
