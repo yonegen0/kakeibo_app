@@ -91,8 +91,26 @@ const StyledMarkdown = styled(Box)(({ theme }) => ({
  */
 export const MarkdownRenderer = (props: MarkdownRendererProps) => (
   <StyledMarkdown>
-    {/* ReactMarkdown で Markdown を HTML に変換して表示 */}
-    <ReactMarkdown>{props.markdown}</ReactMarkdown>
+    {/* 生HTMLは描画せず、安全な要素だけをレンダリングする */}
+    <ReactMarkdown
+      skipHtml
+      allowedElements={[
+        'h1',
+        'h2',
+        'h3',
+        'p',
+        'ul',
+        'ol',
+        'li',
+        'blockquote',
+        'code',
+        'pre',
+        'strong',
+        'em',
+      ]}
+    >
+      {props.markdown}
+    </ReactMarkdown>
   </StyledMarkdown>
 );
 

@@ -63,3 +63,21 @@ export const Empty: Story = {
   },
 };
 
+/**
+ * Long: 10ヶ月分のサマリー表示状態
+ * 10ヶ月分のサマリーを表示。月ごとのサマリーを確認。
+ */
+export const Long: Story = {
+  args: {
+    summaries: Array.from({ length: 10 }, (_, index) => ({
+      month: `2026-0${index + 1}`,
+      incomeTotal: index * 1000,
+      expenseTotal: index * 1000,
+      balance: index * 1000,
+      categories: [],
+      dailyTrend: [],
+      topExpenses: [],
+      fixedCosts: [],
+    })),
+  },
+};

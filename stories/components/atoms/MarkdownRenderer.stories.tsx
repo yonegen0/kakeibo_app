@@ -59,3 +59,18 @@ export const Empty: Story = {
     markdown: '',
   },
 };
+
+/**
+ * SanitizeHtml: 危険なHTMLが無視されることを確認
+ */
+export const SanitizeHtml: Story = {
+  args: {
+    markdown: `# 安全性テスト
+
+<script>alert('xss')</script>
+<img src="x" onerror="alert('xss')" />
+
+- このテキストは表示される
+- 生HTMLは描画されない`,
+  },
+};
