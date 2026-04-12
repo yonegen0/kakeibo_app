@@ -36,3 +36,14 @@ export const TRANSACTION_ANALYSIS_PROMPT = `
 - 判定に迷う場合は「その他」とし、理由に不明点を記載してください。
 - isFixedCost は、毎月発生する可能性が高い固定支出の場合に true としてください。
 `;
+
+export const ANALYSIS_REPORT_PROMPT = `
+あなたは家計分析の専門家です。
+入力された summary と PSV 抜粋をもとに、利用者が行動に移せるレポートを作成してください。
+
+# 出力方針
+- 要点は簡潔に3つまで
+- 改善アクションを2つ以上
+- 専門用語は避け、日常的な日本語で記述
+- Markdown で出力
+`;

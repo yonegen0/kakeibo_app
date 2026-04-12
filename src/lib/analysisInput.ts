@@ -18,30 +18,30 @@ const sanitizeText = (value: string) =>
     .trim()
     .slice(0, 80);
 
-/* 重要な行を選択する純粋関数 */
+/* 重要な行を選択する関数 */
 const pickImportantRows = (transactions: TransactionModel[]) => {
-  /* 取引をソート */
+  // 取引をソート
   const sorted = [...transactions].sort((a, b) => Math.abs(b.amount.value) - Math.abs(a.amount.value));
-  /* 高額取引を選択 */
+  // 高額取引を選択
   const highAmount = sorted.filter((t) => Math.abs(t.amount.value) >= AMOUNT_THRESHOLD);
-  /* 固定費を選択 */
+  // 固定費を選択
   const fixedCosts = sorted.filter((t) => t.isFixedCost);
-  /* マージ */
+  // マージ
   const merged = [...highAmount, ...fixedCosts, ...sorted];
-  /* 一意な取引を選択 */
+  // 一意な取引を選択
   const unique = new Map<string, TransactionModel>();
-  /* 一意な取引を追加 */
+  // 一意な取引を追加
   for (const row of merged) {
     if (!unique.has(row.id)) unique.set(row.id, row);
     if (unique.size >= MAX_PSV_ROWS) break;
   }
-  /* 一意な取引を返却 */
+  // 一意な取引を返却
   return Array.from(unique.values());
 };
 
-/* プロンプト行を生成する純粋関数 */
+/* プロンプト行を生成する関数 */
 const toPromptRows = (transactions: TransactionModel[]) =>
-  /* 重要な行を選択 */
+  // 重要な行を選択
   pickImportantRows(transactions).map((row) => ({
     id: row.id,
     date: row.date,
@@ -53,10 +53,11 @@ const toPromptRows = (transactions: TransactionModel[]) =>
     isFixedCost: row.isFixedCost,
   }));
 
-/* 分析プロンプトを生成する純粋関数 */
+/* 分析プロンプトを生成する関数 */
 export const buildAnalysisPromptSnapshot = (summary: SummaryModel, transactions: TransactionModel[]) => {
-  /* ペイロードを生成 */
+  // ペイロードを生成
   const payload = {
+    // サマリーを生成
     summary: {
       month: summary.month,
       incomeTotal: summary.incomeTotal,
@@ -65,7 +66,9 @@ export const buildAnalysisPromptSnapshot = (summary: SummaryModel, transactions:
       topCategories: summary.categories.slice(0, 5),
       topExpenses: summary.topExpenses.slice(0, 5),
     },
+    // プロンプト行を生成
     extractedPsvRows: toPromptRows(transactions),
+    // 抽出ルールを生成
     extractionRule: {
       maxRows: MAX_PSV_ROWS,
       amountThreshold: AMOUNT_THRESHOLD,
@@ -73,5 +76,6 @@ export const buildAnalysisPromptSnapshot = (summary: SummaryModel, transactions:
     },
   };
 
+  // 分析プロンプトを返却
   return `${ANALYSIS_REPORT_PROMPT}\n\n# 解析入力(JSON)\n${JSON.stringify(payload, null, 2)}`;
 };
