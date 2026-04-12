@@ -8,9 +8,12 @@ import { CssBaseline } from '@mui/material';
 import { theme } from '../src/lib/theme';
 import { sb } from 'storybook/test';
 
-sb.mock(import('../src/hooks/useMFUploader.ts'), { spy: true });
 sb.mock(import('../src/hooks/useAIAnalyzer.ts'), { spy: true });
+sb.mock(import('../src/hooks/useAnalysisTemplate.ts'), { spy: true });
+sb.mock(import('../src/hooks/useMFUploader.ts'), { spy: true });
+sb.mock(import('../src/hooks/useReportTemplate.ts'), { spy: true });
 sb.mock(import('../src/hooks/useTransactionAutoAnalyzer.ts'), { spy: true });
+sb.mock(import('../src/hooks/useTransactionImportTemplate.ts'), { spy: true });
 sb.mock(import('../src/hooks/useTransactionSummary.ts'), { spy: true });
 
 /**

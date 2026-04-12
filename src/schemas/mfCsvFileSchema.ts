@@ -6,7 +6,8 @@
  */
 import { z } from 'zod';
 
-/** * マネーフォワードCSV 1行分の検証・変換スキーマ 
+/**
+ * マネーフォワードCSV 1行分の検証・変換スキーマ 
  * 日本語のヘッダーを適切な英語プロパティにマッピングします。
  */
 export const mfRowSchema = z.object({
@@ -24,16 +25,25 @@ export const mfRowSchema = z.object({
   '振替': z.string().optional(),
   'ID': z.string().optional(),
 }).transform((data) => ({
-  // 内部で扱うための英語プロパティにマッピング
-  isCalculated: data['計算対象'] === '1', // 1なら対象、といったロジックがあればここで変換
+  /* 計算対象フラグ */
+  isCalculated: data['計算対象'] === '1',
+  /* 日付 */
   date: data['日付'],
+  /* 内容 */
   content: data['内容'],
+  /* 金額 */
   amount: data['金額（円）'],
+  /* 保有金融機関 */
   source: data['保有金融機関'],
+  /* 大項目 */
   category: data['大項目'],
+  /* 中項目 */
   subCategory: data['中項目'],
+  /* メモ */
   memo: data['メモ'],
+  /* 振替フラグ */
   isTransfer: data['振替'] === '1',
+  /* ID */
   mfId: data['ID'],
 }));
 

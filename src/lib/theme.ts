@@ -3,24 +3,24 @@ import { createTheme } from '@mui/material/styles';
 export const theme = createTheme({
   palette: {
     primary: {
-      main: '#0F172A', // 深みのあるダークネイビー（モダンな信頼感）
+      main: '#0F172A',
       light: '#334155',
       dark: '#020617',
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#06B6D4', // 鮮やかなシアン（テック系・先進性）
+      main: '#06B6D4',
       light: '#67E8F9',
       dark: '#0891B2',
     },
     success: {
-      main: '#10B981', // 明るいエメラルド（家計のポジティブな変化）
+      main: '#10B981',
     },
     error: {
-      main: '#F43F5E', // ローズ系レッド（警告だがきつすぎない）
+      main: '#F43F5E',
     },
     background: {
-      default: '#F8FAFC', // わずかに青みのあるグレー（清潔感）
+      default: '#F8FAFC',
       paper: '#FFFFFF',
     },
     text: {
@@ -29,14 +29,14 @@ export const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 12, // 少し丸みを強めることでモダンな柔らかさを演出
+    borderRadius: 12,
   },
   typography: {
     fontFamily: '"Inter", "JetBrains Mono", "Helvetica Neue", Arial, sans-serif',
     h1: { fontWeight: 700, color: '#0F172A' },
     h2: { fontWeight: 700, color: '#0F172A' },
     button: {
-      textTransform: 'none', // 英語の全大文字化を解除
+      textTransform: 'none',
       fontWeight: 600,
       letterSpacing: '0.02em',
     },

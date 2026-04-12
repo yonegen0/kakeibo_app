@@ -7,6 +7,7 @@ import { mfCsvFileSchema, type MfCsvData } from '@/schemas/mfCsvFileSchema';
 
 /** 検証済み 1 行に、一覧用の安定キーを付けた形 */
 export type MfCsvTransactionWithId = MfCsvData[number] & {
+  /** 一覧用 ID */
   id: string;
 };
 
@@ -33,9 +34,8 @@ export const buildMfCsvTransactionsFromRows = (
   rows: unknown,
   options: BuildMfCsvTransactionsOptions,
 ): BuildMfCsvTransactionsResult => {
-  /* 行配列を検証 */
+  // 行配列を検証
   const validated = mfCsvFileSchema.safeParse(rows);
-  /* 検証失敗時 */
   if (!validated.success) {
     return {
       ok: false,
@@ -44,9 +44,9 @@ export const buildMfCsvTransactionsFromRows = (
     };
   }
 
-  /* 検証成功時 */
+  // 検証成功時
   const { fileName, batchToken } = options;
-  /* 各行に一覧用 ID を付与 */
+  // 各行に一覧用 ID を付与
   const data: MfCsvTransactionWithId[] = validated.data.map((row, index) => ({
     ...row,
     id: `${fileName}-${batchToken}-${index}`,
