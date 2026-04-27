@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f7ff;
+  --foreground: #101528;
+  --surface: #ffffffd9;
+  --surface-border: #d8e1ff;
+  --primary-soft: #5b7cfa;
+  --primary-strong: #3b5bdb;
 }
 
 @theme inline {
@@ -14,13 +18,34 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #090c1a;
+    --foreground: #f3f6ff;
+    --surface: #0f1730d9;
+    --surface-border: #2b3a6f;
+    --primary-soft: #86a1ff;
+    --primary-strong: #5f7dff;
   }
 }
 
 body {
-  background: var(--background);
+  margin: 0;
+  min-height: 100vh;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Segoe UI", Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(60rem 35rem at 15% -5%, color-mix(in srgb, var(--primary-soft) 28%, transparent), transparent 60%),
+    radial-gradient(55rem 35rem at 100% 0%, color-mix(in srgb, var(--primary-soft) 18%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--background) 0%, color-mix(in srgb, var(--background) 82%, #ffffff) 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary-soft) 30%, transparent);
 }
