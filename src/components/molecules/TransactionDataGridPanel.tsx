@@ -24,59 +24,95 @@ type TransactionDataGridPanelProps = {
   loading?: boolean;
   /** 表の上に差し込む任意の UI */
   toolbarNode?: React.ReactNode;
+  /** インライン編集確定時に呼ばれる（DataGrid processRowUpdate） */
+  processRowUpdate?: (newRow: TransactionModel, oldRow: TransactionModel) => TransactionModel | Promise<TransactionModel>;
 };
 
 /* --- Styled Components --- */
 const StyledTableContainer = styled(Paper)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(0),
-  borderRadius: theme.spacing(1.75),
-  boxShadow: `0 1px 2px ${alpha(theme.palette.common.black, 0.06)}`,
-  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: theme.spacing(2),
+  border: `1px solid ${theme.palette.primary.light}2A`,
   overflow: 'hidden',
-  backgroundColor: theme.palette.background.paper,
+  background: `
+    radial-gradient(ellipse at 0% 0%, ${alpha(theme.palette.secondary.main, 0.06)}, transparent 60%),
+    ${theme.palette.background.paper}
+  `,
+  boxShadow: `
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 16px 32px -16px rgba(15, 23, 42, 0.12),
+    0 0 0 1px ${alpha(theme.palette.secondary.main, 0.04)}
+  `,
 }));
 
 /** 表の高さを決める枠 */
 const StyledDataGridWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== '$height',
-})<{ $height?: number | string }>(({ theme, $height }) => ({
+})<{ $height?: number | string }>(({ $height }) => ({
   height: $height ?? 600,
   width: '100%',
-  backgroundColor: alpha(theme.palette.primary.main, 0.02),
+  backgroundColor: 'transparent',
 }));
 
+/** 取引表の DataGrid */
 const StyledDataGrid = styled(DataGrid<TransactionModel>)(({ theme }) => ({
   border: 'none',
   backgroundColor: 'transparent',
   '& .MuiDataGrid-columnHeaders': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.05),
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    minHeight: 44,
+    background: `linear-gradient(180deg, ${alpha(theme.palette.secondary.main, 0.1)} 0%, ${alpha(theme.palette.secondary.main, 0.06)} 100%)`,
+    borderBottom: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+    minHeight: 48,
   },
   '& .MuiDataGrid-columnHeaderTitle': {
+    fontFamily: '"JetBrains Mono", monospace',
     fontWeight: 700,
     fontSize: '0.7rem',
     letterSpacing: '0.06em',
     textTransform: 'uppercase',
-    color: theme.palette.text.secondary,
+    color: theme.palette.secondary.dark,
+  },
+  '& .MuiDataGrid-row': {
+    transition: 'background-color .15s ease',
+  },
+  '& .MuiDataGrid-row:nth-of-type(even)': {
+    backgroundColor: alpha(theme.palette.secondary.main, 0.025),
   },
   '& .MuiDataGrid-row:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.04),
+    backgroundColor: alpha(theme.palette.secondary.main, 0.07),
+  },
+  '& .MuiDataGrid-row.Mui-selected': {
+    backgroundColor: alpha(theme.palette.secondary.main, 0.12),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.secondary.main, 0.16),
+    },
   },
   '& .MuiDataGrid-cell': {
-    borderColor: theme.palette.divider,
+    borderColor: alpha(theme.palette.divider, 0.6),
   },
   '& .MuiDataGrid-cell:focus': {
     outline: 'none',
   },
   '& .MuiDataGrid-cell:focus-within': {
     outline: 'none',
+    boxShadow: `inset 0 0 0 2px ${alpha(theme.palette.secondary.main, 0.4)}`,
   },
   '& .MuiDataGrid-footerContainer': {
-    borderTop: `1px solid ${theme.palette.divider}`,
-    backgroundColor: theme.palette.background.default,
+    borderTop: `1px solid ${alpha(theme.palette.secondary.main, 0.25)}`,
+    background: `linear-gradient(180deg, transparent 0%, ${alpha(theme.palette.secondary.main, 0.04)} 100%)`,
     minHeight: 48,
+  },
+  '& .MuiDataGrid-footerContainer .MuiIconButton-root:hover': {
+    color: theme.palette.secondary.dark,
+  },
+  '& .MuiDataGrid-overlay': {
+    backgroundColor: alpha(theme.palette.background.paper, 0.7),
+    backdropFilter: 'blur(2px)',
+  },
+  '& .MuiDataGrid-cell--editing': {
+    overflow: 'visible',
+    position: 'relative',
+    zIndex: 2,
   },
 }));
 
@@ -99,6 +135,8 @@ export const TransactionDataGridPanel = (props: TransactionDataGridPanelProps) =
           rows={props.rows}
           columns={props.columns}
           loading={props.loading ?? false}
+          processRowUpdate={props.processRowUpdate}
+          onProcessRowUpdateError={(err) => console.error('processRowUpdate failed', err)}
           pageSizeOptions={[10, 25, 50]}
           initialState={{
             pagination: {

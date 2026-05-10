@@ -3,9 +3,10 @@
  * @description 取引表の上に出す一行。AI による一括仕訳ボタンを置く。
  */
 
-import { Button, CircularProgress, Toolbar } from '@mui/material';
+import { CircularProgress, Toolbar } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { Button } from '@/components/atoms/Button';
 
 /* --- Types --- */
 /**

@@ -5,12 +5,14 @@
  * 取引データを変換・集計してPSV形式で保存する
  */
 
-import { Box, Button, Alert } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { StyledHeroCard, StepHeader } from '@/components/atoms/PageShell';
 import { CsvUploadMonitor } from '@/components/organisms/CsvUploadMonitor';
 import { TransactionTable } from '@/components/organisms/TransactionTable';
 import { SummaryCard } from '@/components/organisms/SummaryCard';
 import { useTransactionImportTemplate } from '@/hooks/useTransactionImportTemplate';
+import { Button } from '@/components/atoms/Button';
 
 /* --- Types --- */
 /**
@@ -21,7 +23,8 @@ type TransactionImportTemplateProps = {
   height?: number | string;
 };
 
-/* --- Styled Components --- */
+/* --- Styled --- */
+
 /** セクション間余白を調整するラッパー */
 const StyledSection = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -37,6 +40,11 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
 }));
 
+/** エラー表示スロット */
+const StyledErrorSlot = styled(Box)(() => ({
+  flex: 1,
+}));
+
 /* --- Component --- */
 /**
  * CSVアップロードの結果に応じて、取引テーブルを表示するテンプレートコンポーネント
@@ -48,31 +56,49 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
  * @returns アップロード/取引一覧表示用の要素
  */
 export const TransactionImportTemplate = (props: TransactionImportTemplateProps) => {
-  const { transactions, summaries, isParsing, isAnalyzing, error, saveError, handleSavePsv } =
-    useTransactionImportTemplate();
+  const {
+    transactions,
+    summaries,
+    isParsing,
+    isAnalyzing,
+    error,
+    saveError,
+    validationError,
+    handleSavePsv,
+    handleFileSelect,
+    dataLength,
+    handleToggleFixedCost,
+    handleUpdateRow,
+  } = useTransactionImportTemplate();
 
-  /* --- Render --- */
   return (
-    <div>
-      {/* S3アップロードモニター */}
-      <CsvUploadMonitor />
+    <StyledHeroCard elevation={0}>
+      <StepHeader
+        step="01"
+        title="CSVアップロード"
+        desc="MoneyForward CSVを取り込み、取引データを確認してPSVを保存します。"
+      />
 
-      {/* 取込が終わり、行があればサマリー以下を出す */}
+      <CsvUploadMonitor
+        handleFileSelect={handleFileSelect}
+        dataLength={dataLength}
+        isParsing={isParsing}
+        error={error}
+      />
+
       {!isParsing && transactions.length > 0 && (
         <>
-          {/* 集計サマリー表示 */}
           <StyledSection>
             <SummaryCard summaries={summaries} />
           </StyledSection>
 
-          {/* PSV保存アクションエリア */}
           <StyledSection>
             <StyledActionArea>
-              <Box sx={{ flex: 1 }}>
-                {/* エラー表示 */}
+              <StyledErrorSlot>
                 {error && <Alert severity="error">{error}</Alert>}
                 {saveError && <Alert severity="error">{saveError}</Alert>}
-              </Box>
+                {validationError && <Alert severity="warning">{validationError}</Alert>}
+              </StyledErrorSlot>
               <Button
                 variant="contained"
                 color="secondary"
@@ -84,13 +110,11 @@ export const TransactionImportTemplate = (props: TransactionImportTemplateProps)
             </StyledActionArea>
           </StyledSection>
 
-          {/* 取引テーブル表示 */}
           <StyledSection>
-            <TransactionTable rows={transactions} height={props.height} />
+            <TransactionTable rows={transactions} height={props.height} onToggleFixedCost={handleToggleFixedCost} onUpdateRow={handleUpdateRow} />
           </StyledSection>
         </>
       )}
-    </div>
+    </StyledHeroCard>
   );
 };
-

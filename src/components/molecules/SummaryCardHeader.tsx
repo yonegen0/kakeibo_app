@@ -3,8 +3,8 @@
  * @description サマリーカード上部のラベル・見出し・月の切り替え。
  */
 import { useId } from 'react';
-import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, FormControl, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
 
 /* --- Types --- */
 /**
@@ -32,34 +32,100 @@ const StyledCardHeader = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   gap: theme.spacing(2),
   flexWrap: 'wrap',
+  paddingBottom: theme.spacing(2),
+  marginBottom: theme.spacing(2.5),
+  borderBottom: `1px solid ${alpha(theme.palette.secondary.main, 0.15)}`,
 }));
 
 /** タイトル周りのブロック */
-const StyledTitleBlock = styled(Box)(() => ({}));
+const StyledTitleBlock = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.75),
+}));
 
-/** 上段の小ラベル */
+/** 上段の小ラベル（バッジ風） */
 const StyledEyebrow = styled(Typography)(({ theme }) => ({
-  fontSize: '0.7rem',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.75),
+  padding: `${theme.spacing(0.375)} ${theme.spacing(1)}`,
+  borderRadius: theme.spacing(6),
+  border: `1px solid ${alpha(theme.palette.secondary.main, 0.3)}`,
+  backgroundColor: alpha(theme.palette.secondary.main, 0.06),
+  fontFamily: '"JetBrains Mono", monospace',
+  fontSize: '0.6875rem',
   fontWeight: 700,
-  letterSpacing: '0.12em',
+  letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  color: theme.palette.text.secondary,
-  marginBottom: theme.spacing(0.5),
+  color: theme.palette.secondary.dark,
+  alignSelf: 'flex-start',
+  '&::before': {
+    content: '""',
+    display: 'inline-block',
+    width: 6,
+    height: 6,
+    borderRadius: '50%',
+    backgroundColor: theme.palette.secondary.main,
+    flexShrink: 0,
+  },
 }));
 
 /** メインタイトル */
 const StyledTitle = styled(Typography)(({ theme }) => ({
-  fontWeight: 800,
+  fontWeight: 900,
   letterSpacing: '-0.02em',
-  color: theme.palette.text.primary,
+  lineHeight: 1.15,
+  color: theme.palette.primary.main,
+}));
+
+/** ドロップダウンメニューの Paper */
+const StyledMenuPaper = styled(Paper)(({ theme }) => ({
+  borderRadius: theme.spacing(1.5),
+  marginTop: theme.spacing(0.5),
+}));
+
+/** ドロップダウンの選択肢 */
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.secondary.main, 0.08),
+  },
+  '&.Mui-selected': {
+    backgroundColor: alpha(theme.palette.secondary.main, 0.14),
+    fontWeight: 600,
+  },
+  '&.Mui-selected:hover': {
+    backgroundColor: alpha(theme.palette.secondary.main, 0.2),
+  },
 }));
 
 /** 月プルダウン */
 const StyledMonthFormControl = styled(FormControl)(({ theme }) => ({
   minWidth: 168,
   '& .MuiOutlinedInput-root': {
-    borderRadius: theme.spacing(1.25),
+    borderRadius: theme.spacing(1.5),
     backgroundColor: theme.palette.background.paper,
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: alpha(theme.palette.secondary.main, 0.25),
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.secondary.main,
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.secondary.main,
+      borderWidth: 2,
+      boxShadow: `0 0 0 4px ${alpha(theme.palette.secondary.main, 0.12)}`,
+    },
+  },
+  '& .MuiInputLabel-root': {
+    color: theme.palette.text.secondary,
+    '&.Mui-focused': {
+      color: theme.palette.secondary.dark,
+    },
+  },
+  '& .MuiSelect-select': {
+    fontWeight: 600,
+    fontSize: '0.875rem',
   },
 }));
 
@@ -91,11 +157,12 @@ export const SummaryCardHeader = (props: SummaryCardHeaderProps) => {
           value={props.selectedMonth}
           label="表示月"
           onChange={(e) => props.onMonthChange(String(e.target.value))}
+          MenuProps={{ PaperProps: { component: StyledMenuPaper } }}
         >
           {props.monthOptions.map((m) => (
-            <MenuItem value={m} key={m}>
+            <StyledMenuItem value={m} key={m}>
               {m}
-            </MenuItem>
+            </StyledMenuItem>
           ))}
         </Select>
       </StyledMonthFormControl>

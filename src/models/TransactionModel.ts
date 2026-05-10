@@ -13,21 +13,26 @@ export type Amount = {
 };
 
 /**
+ * 大項目（カテゴリ）
+ */
+export type Category = '収入' | '食費' | '日用品' | '趣味・娯楽' | '交際費' | '交通費' | '衣服・美容' | '健康・医療' | '自動車' | '教養・教育' | '特別な支出' | '現金・カード' | '水道・光熱費' | '通信費' | '住宅' | '税・社会保障' | '保険' | 'その他';
+
+/**
  * 支出・収入の1件分を表す明細モデル
  * 画面表示だけでなく、AWS Glue でのデータ処理時もこの構造を基準とします。
  */
 export type TransactionModel = {
-  id: string;               // ユニークID
-  date: string;             // 計算日
-  amount: Amount;           // 金額オブジェクト
-  content: string;          // 取引内容
-  category: string;         // 大項目（例：食費）
-  subCategory: string;      // 中項目（例：ランチ）を追加
-  isCalculated?: boolean;   // 計算対象フラグ（CSVに存在しない場合は true とみなす）
-  isTransfer?: boolean;     // 振替フラグ（CSVに存在しない場合は false とみなす）
-  isFixedCost: boolean;     // 固定費フラグ
-  memo: string;             // 解析理由や補足メモを追加
-  source: 'moneyforward';   // 取り込み元
+  id: string;                 // ユニークID
+  date: string;               // 計算日
+  amount: Amount;             // 金額オブジェクト
+  content: string;            // 取引内容
+  category: Category;         // 大項目（例：食費）
+  subCategory: string;        // 中項目（例：ランチ）を追加
+  isCalculated?: boolean;     // 計算対象フラグ（CSVに存在しない場合は true とみなす）
+  isTransfer?: boolean;       // 振替フラグ（CSVに存在しない場合は false とみなす）
+  isFixedCost: boolean;       // 固定費フラグ
+  memo: string;               // 解析理由や補足メモを追加
+  source: 'moneyforward';     // 取り込み元
 };
 
 /** 月次集計モデル */
@@ -84,7 +89,7 @@ export type SummaryModel = {
   fixedCosts: FixedCostItem[];    // 固定費
 };
 
-/** PSVメタデータの1行（PSV ID・ユーザーID・ファイル名・行数・月範囲・作成日時・更新日時・最新フラグ） */
+/** PSVメタデータの1行（PSV ID・ユーザーID・ファイル名・行数・月範囲・S3キー・作成日時・更新日時） */
 export type PsvMetaModel = {
   psvId: string;            // PSV ID
   userId: string;           // ユーザーID
@@ -94,7 +99,7 @@ export type PsvMetaModel = {
     from: string;           // 開始月（YYYY-MM）
     to: string;             // 終了月（YYYY-MM）
   };
+  s3Key: string;            // S3 オブジェクトキー（raw/{userId}/{psvId}.json）
   createdAt: string;        // 作成日時（ISO 8601）
   updatedAt: string;        // 更新日時（ISO 8601）
-  isLatest: boolean;        // 最新フラグ
 };

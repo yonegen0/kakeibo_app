@@ -3,6 +3,7 @@
  * @description psvId を渡して AI 家計レポート（要約・本文など）を取得する。
  */
 import { useCallback, useRef, useState } from 'react';
+import { apiFetch, ApiError } from '@/lib/apiClient';
 import type { AIReportModel } from '@/models/AIReportModel';
 import { logClientError } from '@/lib/clientLog';
 
@@ -52,26 +53,17 @@ export const useAIAnalyzer = (): UseAIAnalyzerReturn => {
     setError(null);
 
     try {
-      // API から分析APIを呼び出し、AI レポートを取得する
-      const response = await fetch(`/api/analyze/${psvId}`, {
+      const data = await apiFetch<{ report: AIReportModel }>(`/analyze/${psvId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           promptOverride: promptOverride?.trim() ? promptOverride : undefined,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error(`AI report failed: ${response.statusText}`);
-      }
-
-      const data: { report: AIReportModel } = await response.json();
       return data.report;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error occurred';
+      const message = err instanceof ApiError ? `AI report failed: ${err.status}` : 'Unknown error occurred';
       setError(message);
       logClientError('useAIAnalyzer', 'analyzeByPsvId failed', message, err);
-      // 失敗時は null のみ返し、画面は呼び出し元のままにできる
       return null;
     } finally {
       analyzeInFlightRef.current = false;
@@ -91,15 +83,10 @@ export const useAIAnalyzer = (): UseAIAnalyzerReturn => {
     setError(null);
 
     try {
-      // API から生成済み AI レポートを取得する
-      const response = await fetch(`/api/report/${reportId}`);
-      if (!response.ok) {
-        throw new Error(`Report fetch failed: ${response.statusText}`);
-      }
-      const data: { report: AIReportModel } = await response.json();
+      const data = await apiFetch<{ report: AIReportModel }>(`/report/${reportId}`);
       return data.report;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error occurred';
+      const message = err instanceof ApiError ? `Report fetch failed: ${err.status}` : 'Unknown error occurred';
       setError(message);
       logClientError('useAIAnalyzer', 'fetchReportById failed', message, err);
       return null;

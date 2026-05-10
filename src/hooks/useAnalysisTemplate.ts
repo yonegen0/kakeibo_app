@@ -4,6 +4,7 @@
  */
 import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { apiFetch, ApiError, getCurrentUserId } from '@/lib/apiClient';
 import { logClientError } from '@/lib/clientLog';
 import { useAIAnalyzer } from '@/hooks/useAIAnalyzer';
 import { useTransactionAutoAnalyzer } from '@/hooks/useTransactionAutoAnalyzer';
@@ -107,14 +108,7 @@ export const useAnalysisTemplate = (): UseAnalysisTemplateReturn => {
       }
 
       try {
-        // 最新の PSV を取得する API を呼び出す
-        const response = await fetch('/api/psv/latest');
-        if (!response.ok) {
-          if (active) setLocalError('psvId が取得できません。アップロード画面からやり直してください。');
-          return;
-        }
-        // 最新の PSV を取得
-        const data: { psvId: string } = await response.json();
+        const data = await apiFetch<{ psvId: string }>(`/psv/latest?userId=${getCurrentUserId()}`);
         if (!data.psvId) {
           if (active) setLocalError('psvId が取得できません。アップロード画面からやり直してください。');
           return;
@@ -124,6 +118,10 @@ export const useAnalysisTemplate = (): UseAnalysisTemplateReturn => {
           setPsvId(data.psvId);
         }
       } catch (err) {
+        if (err instanceof ApiError && err.status === 404) {
+          if (active) setLocalError('psvId が取得できません。アップロード画面からやり直してください。');
+          return;
+        }
         logClientError('useAnalysisTemplate', 'resolvePsvId: psv/latest failed', err);
         if (active) setLocalError('psvId の復元に失敗しました。アップロード画面からやり直してください。');
       }
@@ -177,22 +175,20 @@ export const useAnalysisTemplate = (): UseAnalysisTemplateReturn => {
   /* サーバーが生成するデフォルトプロンプトを取得し、入力欄へ反映する。 */
   const handleLoadDefaultPrompt = async () => {
     if (!psvId) return;
-    // プロンプトの読み込み中を設定
     setIsLoadingPrompt(true);
-    // デフォルトプロンプトを取得する
     try {
-      // デフォルトプロンプトを取得する API を呼び出す
-      const response = await fetch(`/api/analyze/${psvId}`);
-      if (!response.ok) {
-        throw new Error('デフォルトプロンプトの取得に失敗しました。');
-      }
-      // デフォルトプロンプトを取得
-      const data: { prompt: string } = await response.json();
-      // プロンプトを設定
+      const data = await apiFetch<{ prompt: string }>(`/analyze/${psvId}`);
       setPromptOverride(data.prompt ?? '');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'デフォルトプロンプトの取得に失敗しました。';
-      logClientError('useAnalysisTemplate', 'handleLoadDefaultPrompt failed', message, error);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 404) {
+        // 未分析の PSV は analyze レコードが存在しないため空欄のままにする
+        setPromptOverride('');
+        return;
+      }
+      const message = err instanceof ApiError
+        ? `デフォルトプロンプトの取得に失敗しました（${err.status}）。`
+        : 'デフォルトプロンプトの取得に失敗しました。';
+      logClientError('useAnalysisTemplate', 'handleLoadDefaultPrompt failed', message, err);
       setLocalError(message);
     } finally {
       setIsLoadingPrompt(false);

@@ -3,6 +3,7 @@
  * @description TransactionGridコンポーネントの表示確認用ストーリー。
  */
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from 'storybook/test';
 import { TransactionGrid } from '@/components/organisms/TransactionGrid';
 import type { TransactionModel } from '@/models/TransactionModel';
 import { TransactionAutoAnalyzeToolbar } from '@/components/molecules/TransactionAutoAnalyzeToolbar';
@@ -13,7 +14,7 @@ const mockRows: TransactionModel[] = [
     date: '2026/03/01',
     content: 'アマゾンジャパン（キンドル）',
     amount: { value: 1500, unit: '円' },
-    category: '未分類',
+    category: '未分類' as TransactionModel['category'],
     subCategory: '',
     isFixedCost: false,
     memo: '',
@@ -24,7 +25,7 @@ const mockRows: TransactionModel[] = [
     date: '2026/03/02',
     content: 'スターバックス コーヒー 名古屋',
     amount: { value: 650, unit: '円' },
-    category: '未分類',
+    category: '未分類' as TransactionModel['category'],
     subCategory: '',
     isFixedCost: false,
     memo: '',
@@ -50,10 +51,20 @@ export default meta;
 type Story = StoryObj<typeof TransactionGrid>;
 
 /**
- * Default: データ表示状態
- * 取引明細データをDataGridで表示。タイトルとサブタイトル付き。
+ * Default: 読み取り専用（固定費列が disabled）
+ * onToggleFixedCost 未指定のため固定費列のスイッチが操作不可。
  */
 export const Default: Story = {};
+
+/**
+ * WithFixedCostToggle: 固定費トグル有効状態
+ * onToggleFixedCost が渡され、各行の固定費スイッチが操作可能。
+ */
+export const WithFixedCostToggle: Story = {
+  args: {
+    onToggleFixedCost: fn(),
+  },
+};
 
 /**
  * WithToolbar: ツールバー付き状態
@@ -78,6 +89,16 @@ export const WithToolbar: Story = {
 export const Loading: Story = {
   args: {
     loading: true,
+  },
+};
+
+/**
+ * WithRowUpdate: インライン編集有効状態
+ * onUpdateRow が渡され、大項目・中項目・メモのセルが編集可能。
+ */
+export const WithRowUpdate: Story = {
+  args: {
+    onUpdateRow: fn(),
   },
 };
 

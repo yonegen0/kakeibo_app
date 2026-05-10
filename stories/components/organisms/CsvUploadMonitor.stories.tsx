@@ -3,16 +3,20 @@
  * @description CsvUploadMonitor コンポーネントの表示確認用ストーリー。
  */
 import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from 'storybook/test';
 import { CsvUploadMonitor } from '@/components/organisms/CsvUploadMonitor';
-import { mocked, fn } from 'storybook/test';
-import * as MFUploaderModule from '@/hooks/useMFUploader';
 
 const meta: Meta<typeof CsvUploadMonitor> = {
   title: 'Organisms/CsvUploadMonitor',
   component: CsvUploadMonitor,
   parameters: {
-    // コンポーネントが画面端に寄らないよう中央配置
     layout: 'centered',
+  },
+  args: {
+    handleFileSelect: fn(),
+    dataLength: 0,
+    isParsing: false,
+    error: null,
   },
 };
 
@@ -23,30 +27,15 @@ type Story = StoryObj<typeof CsvUploadMonitor>;
  * Default: 初期状態
  * ファイルが選択される前の、アップロードエリアが表示されている状態。
  */
-export const Default: Story = {
-  beforeEach: () => {
-    // Hooksが返す初期値をモック定義
-    mocked(MFUploaderModule.useMFUploader).mockReturnValue({
-      handleFileSelect: fn(),
-      data: null,
-      error: null,
-      isParsing: false,
-    });
-  },
-};
+export const Default: Story = {};
 
 /**
  * Processing: 解析中状態
  * ファイル選択後、バックエンド（またはWorker）で解析を行っている最中の表示。
  */
 export const Processing: Story = {
-  beforeEach: () => {
-    mocked(MFUploaderModule.useMFUploader).mockReturnValue({
-      handleFileSelect: fn(),
-      data: null,
-      error: null,
-      isParsing: true, // プログレスバーが表示される
-    });
+  args: {
+    isParsing: true,
   },
 };
 
@@ -55,13 +44,8 @@ export const Processing: Story = {
  * CSVデータのバリデーションが完了し、件数などのサマリーが表示されている状態。
  */
 export const Success: Story = {
-  beforeEach: () => {
-    mocked(MFUploaderModule.useMFUploader).mockReturnValue({
-      handleFileSelect: fn(),
-      data: Array(50).fill({}), // 50件のデータが読み込まれたと仮定
-      error: null,
-      isParsing: false,
-    });
+  args: {
+    dataLength: 50,
   },
 };
 
@@ -70,12 +54,7 @@ export const Success: Story = {
  * ファイル形式やバリデーションエラーが発生し、ユーザーに通知されている状態。
  */
 export const ValidationError: Story = {
-  beforeEach: () => {
-    mocked(MFUploaderModule.useMFUploader).mockReturnValue({
-      handleFileSelect: fn(),
-      data: null,
-      error: "CSVの列名が不足しています。正しいテンプレートを使用してください。",
-      isParsing: false,
-    });
+  args: {
+    error: 'CSVの列名が不足しています。正しいテンプレートを使用してください。',
   },
 };

@@ -13,7 +13,7 @@ import { logClientError } from '@/lib/clientLog';
  */
 export type Transaction = MfCsvTransactionWithId;
 
-/* 
+/*
   useMFUploader の戻り値
 */
 export type UseMFUploaderReturn = {
@@ -25,6 +25,8 @@ export type UseMFUploaderReturn = {
   error: string | null;
   /* 読み取り・検証中フラグ */
   isParsing: boolean;
+  /* 選択中のファイル名（未選択時は null） */
+  fileName: string | null;
 };
 
 /**
@@ -38,6 +40,8 @@ export const useMFUploader = (): UseMFUploaderReturn => {
   const [error, setError] = useState<string | null>(null);
   /* 読み取り・検証中フラグ */
   const [isParsing, setIsParsing] = useState(false);
+  /* 選択中のファイル名を管理 */
+  const [fileName, setFileName] = useState<string | null>(null);
   /* 読み取り世代を管理 */
   const loadGenerationRef = useRef(0);
 
@@ -48,6 +52,7 @@ export const useMFUploader = (): UseMFUploaderReturn => {
     // バッチトークンを管理
     const batchToken = `${generation}-${Date.now()}-${globalThis.crypto?.randomUUID?.() ?? ''}`;
 
+    setFileName(file.name);
     setIsParsing(true);
     setError(null);
 
@@ -69,6 +74,7 @@ export const useMFUploader = (): UseMFUploaderReturn => {
         Papa.parse(text, {
           header: true,
           skipEmptyLines: true,
+          transformHeader: (h) => h.trim(),
           complete: (results) => {
             if (isStale()) return;
 
@@ -118,5 +124,5 @@ export const useMFUploader = (): UseMFUploaderReturn => {
     reader.readAsText(file, 'Shift_JIS');
   }, []);
 
-  return { handleFileSelect, data, error, isParsing };
+  return { handleFileSelect, data, error, isParsing, fileName };
 };

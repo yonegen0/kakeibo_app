@@ -3,6 +3,7 @@
  * @description 取引一覧を PSV として保存し、psvId 起点の分析フローを扱う。
  */
 import { useState, useCallback } from 'react';
+import { apiFetch, ApiError, getCurrentUserId } from '@/lib/apiClient';
 import { logClientError } from '@/lib/clientLog';
 import type { PsvMetaModel, SummaryModel, TransactionModel } from '@/models/TransactionModel';
 
@@ -14,7 +15,7 @@ type SaveResult = {
   meta: PsvMetaModel;
 };
 
-/* 
+/*
   useTransactionAutoAnalyzer の戻り値
 */
 export type UseTransactionAutoAnalyzerReturn = {
@@ -24,6 +25,8 @@ export type UseTransactionAutoAnalyzerReturn = {
   generateSummary: (psvId: string) => Promise<SummaryModel | null>;
   /* psvId に紐づくメタ情報と取引一覧を復元する */
   loadPsv: (psvId: string) => Promise<{ meta: PsvMetaModel; transactions: TransactionModel[] } | null>;
+  /* 前回PSVから固定費 content 名の Set を返す（isAnalyzing を変更しない） */
+  loadPsvFixedCosts: (psvId: string) => Promise<Set<string>>;
   /* サーバー応答待ちかどうか */
   isAnalyzing: boolean;
   /* 直近の失敗理由（なければ null） */
@@ -47,25 +50,17 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
     setError(null);
 
     try {
-      // API から PSV を保存する
-      const response = await fetch('/api/psv', {
+      const data = await apiFetch<SaveResult>('/psv', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          userId: getCurrentUserId(),
           transactions,
           fileName: fileName ?? 'uploaded.csv',
         }),
       });
-
-      if (!response.ok) {
-        throw new Error(`PSV save failed: ${response.statusText}`);
-      }
-      // API から PSV を保存する
-      const data: SaveResult = await response.json();
-      // PSV を返却
       return data;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error occurred';
+      const message = err instanceof ApiError ? `PSV save failed: ${err.status}` : 'Unknown error occurred';
       setError(message);
       logClientError('useTransactionAutoAnalyzer', 'saveTransactionsAsPsv failed', message, err);
       return null;
@@ -80,16 +75,10 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
     setIsAnalyzing(true);
     setError(null);
     try {
-      // API からサマリーを生成する
-      const response = await fetch(`/api/summary/${psvId}`, { method: 'POST' });
-      if (!response.ok) {
-        throw new Error(`Summary generation failed: ${response.statusText}`);
-      }
-      // サマリーを取得
-      const data: { summary: SummaryModel } = await response.json();
+      const data = await apiFetch<{ summary: SummaryModel }>(`/summary/${psvId}`, { method: 'POST' });
       return data.summary;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error occurred';
+      const message = err instanceof ApiError ? `Summary generation failed: ${err.status}` : 'Unknown error occurred';
       setError(message);
       logClientError('useTransactionAutoAnalyzer', 'generateSummary failed', message, err);
       return null;
@@ -104,17 +93,10 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
     setIsAnalyzing(true);
     setError(null);
     try {
-      // API から PSV を取得する
-      const response = await fetch(`/api/psv/${psvId}`);
-      if (!response.ok) {
-        throw new Error(`PSV load failed: ${response.statusText}`);
-      }
-      // API から PSV を取得する
-      const data: { meta: PsvMetaModel; transactions: TransactionModel[] } = await response.json();
-      // PSV を返却
+      const data = await apiFetch<{ meta: PsvMetaModel; transactions: TransactionModel[] }>(`/psv/${psvId}`);
       return data;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error occurred';
+      const message = err instanceof ApiError ? `PSV load failed: ${err.status}` : 'Unknown error occurred';
       setError(message);
       logClientError('useTransactionAutoAnalyzer', 'loadPsv failed', message, err);
       return null;
@@ -123,10 +105,23 @@ export const useTransactionAutoAnalyzer = (): UseTransactionAutoAnalyzerReturn =
     }
   }, []);
 
+  /* 前回PSVから固定費の content 名のみを Set として取得する（isAnalyzing は変更しない）。 */
+  const loadPsvFixedCosts = useCallback(async (psvId: string): Promise<Set<string>> => {
+    if (!psvId) return new Set();
+    try {
+      const data = await apiFetch<{ meta: PsvMetaModel; transactions: TransactionModel[] }>(`/psv/${psvId}`);
+      return new Set(data.transactions.filter((t) => t.isFixedCost).map((t) => t.content));
+    } catch (err) {
+      logClientError('useTransactionAutoAnalyzer', 'loadPsvFixedCosts failed', err);
+      return new Set();
+    }
+  }, []);
+
   return {
     saveTransactionsAsPsv,
     generateSummary,
     loadPsv,
+    loadPsvFixedCosts,
     isAnalyzing,
     error,
   };

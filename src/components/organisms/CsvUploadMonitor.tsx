@@ -2,12 +2,12 @@
  * @file CsvUploadMonitor.tsx
  * @description CSV の選択と、取込・検証の進み具合（待ち／処理中／成功／失敗）を見せる。
  */
-import { Box, Typography, Paper, LinearProgress, Alert, AlertTitle, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Paper, LinearProgress, Alert, AlertTitle, CircularProgress } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { styled, keyframes } from '@mui/material/styles';
-import { useMFUploader } from '@/hooks/useMFUploader';
+import { Button } from '@/components/atoms/Button';
 
 /* --- Types --- */
 
@@ -19,6 +19,14 @@ export type CsvUploadMonitorProps = {
   width?: string | number;
   /** 枠の高さ */
   height?: string | number;
+  /** ファイル選択時に呼び出すハンドラ */
+  handleFileSelect: (file: File) => void;
+  /** パース済み行数（0 = 未読込） */
+  dataLength: number;
+  /** パース・検証中フラグ */
+  isParsing: boolean;
+  /** エラーメッセージ（null = エラーなし） */
+  error: string | null;
 };
 
 /* --- Animations --- */
@@ -32,10 +40,12 @@ const pulse = keyframes`
 
 /* --- Styled Components --- */
 
+type StyledRootProps = Pick<CsvUploadMonitorProps, 'width' | 'height'>;
+
 /** ルートコンテナ：外部からの指定がない場合はデフォルト幅600pxを適用 */
 const StyledRootContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'width' && prop !== 'height',
-})<CsvUploadMonitorProps>(({ theme, width, height }) => ({
+})<StyledRootProps>(({ theme, width, height }) => ({
   width: width ?? '100%',
   maxWidth: width ? 'none' : 600,
   height: height ?? 'auto',
@@ -106,7 +116,7 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
  * @returns アップロード状態表示用の要素
  */
 export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
-  const { handleFileSelect, data, error, isParsing } = useMFUploader();
+  const { handleFileSelect, dataLength, error, isParsing } = props;
 
   /** 隠したファイル選択を開く */
   const onButtonClick = () => {
@@ -131,7 +141,7 @@ export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
       <input id="csv-upload-input" type="file" accept=".csv" hidden onChange={onFileChange} />
 
       {/* 初期状態：入力待ちエリア */}
-      {!data && !isParsing && !error && (
+      {dataLength === 0 && !isParsing && !error && (
         <StyledUploadBox elevation={0} onClick={onButtonClick}>
           <StyledUploadIcon />
           <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -157,20 +167,17 @@ export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
         </StyledProcessingBox>
       )}
 
-      {/* 成功：検証完了メッセージと次アクションへのボタンを表示 */}
-      {data && (
+      {/* 成功：検証完了メッセージと再選択ボタンを表示 */}
+      {dataLength > 0 && (
         <StatusCard elevation={1}>
           <CheckCircleOutlineIcon color="success" sx={{ fontSize: 64, mb: 2 }} />
           <Typography variant="h5" fontWeight="bold" gutterBottom>
             読み込みが完了しました
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            合計 <strong>{data.length}</strong> 件のデータが正常に検証されました。
+            合計 <strong>{dataLength}</strong> 件のデータが正常に検証されました。
           </Typography>
           <StyledActionArea>
-            <Button variant="contained" color="primary">
-              プレビューを表示
-            </Button>
             <Button variant="outlined" onClick={onReset}>
               別のファイル
             </Button>

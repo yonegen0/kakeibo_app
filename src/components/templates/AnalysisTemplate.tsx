@@ -2,9 +2,47 @@
  * @file AnalysisTemplate.tsx
  * @description 画面②: PSV集計とAI分析実行（分析実行画面）。
  */
-import { Alert, Box, Button, CircularProgress, Paper, TextField, Typography } from '@mui/material';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import { Input } from '@/components/atoms/Input';
+import { styled } from '@mui/material/styles';
+import { StyledHeroCard, StepHeader, StyledNavRow } from '@/components/atoms/PageShell';
 import { SummaryCard } from '@/components/organisms/SummaryCard';
 import { useAnalysisTemplate } from '@/hooks/useAnalysisTemplate';
+import { Button } from '@/components/atoms/Button';
+
+/* --- Styled --- */
+
+/** エラーアラート */
+const StyledErrorAlert = styled(Alert)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+}));
+
+/** ローディング行 */
+const StyledLoadingRow = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
+}));
+
+/** プロンプト編集セクション */
+const StyledPromptSection = styled(Box)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+}));
+
+/** セクション見出し */
+const StyledSubtitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  marginBottom: theme.spacing(1),
+}));
+
+/** プロンプト操作ボタン行 */
+const StyledPromptControls = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  gap: theme.spacing(1),
+  marginBottom: theme.spacing(1.5),
+}));
 
 /* --- Component --- */
 
@@ -33,40 +71,27 @@ export const AnalysisTemplate = () => {
   } = useAnalysisTemplate();
 
   return (
-    <Paper elevation={0} sx={{ p: 3, border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-      {/* ステップインジケーター */}
-      <Typography variant="overline" color="primary" fontWeight={700}>
-        Step 2
-      </Typography>
-      <Typography variant="h5" fontWeight={800} sx={{ mb: 1 }}>
-        分析実行
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 3 }}>
-        保存済みPSVを集計し、AI分析を実行します。
-      </Typography>
+    <StyledHeroCard elevation={0}>
+      <StepHeader step="02" title="分析実行" desc="保存済みPSVを集計し、AI分析を実行します。" />
 
-      {/* エラー表示 */}
       {(localError || summaryError || analyzeError) && (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <StyledErrorAlert severity="error">
           {localError ?? summaryError ?? analyzeError}
-        </Alert>
+        </StyledErrorAlert>
       )}
 
-      {/* サマリー生成中または完了後の表示 */}
       {loadingSummary ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 2 }}>
+        <StyledLoadingRow>
           <CircularProgress size={20} />
           <Typography color="text.secondary">サマリーを生成中です...</Typography>
-        </Box>
+        </StyledLoadingRow>
       ) : (
         <SummaryCard summaries={summaries} />
       )}
 
-      <Box sx={{ mt: 3 }}>
-        <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-          プロンプト編集（任意）
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
+      <StyledPromptSection>
+        <StyledSubtitle variant="subtitle2">プロンプト編集（任意）</StyledSubtitle>
+        <StyledPromptControls>
           <Button
             variant="outlined"
             size="small"
@@ -78,8 +103,8 @@ export const AnalysisTemplate = () => {
           <Button variant="text" size="small" onClick={handleResetPrompt} disabled={isLoadingPrompt}>
             リセット
           </Button>
-        </Box>
-        <TextField
+        </StyledPromptControls>
+        <Input
           fullWidth
           multiline
           minRows={5}
@@ -87,17 +112,16 @@ export const AnalysisTemplate = () => {
           value={promptOverride}
           onChange={(event) => setPromptOverride(event.target.value)}
         />
-      </Box>
+      </StyledPromptSection>
 
-      {/* ナビゲーションボタン */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+      <StyledNavRow>
         <Button variant="outlined" onClick={goUpload}>
           アップロード画面へ戻る
         </Button>
         <Button variant="contained" disabled={!hasSummary || isAnalyzing} onClick={handleAnalyze}>
           {isAnalyzing ? 'AI分析を実行中...' : 'AI分析を実行してレポートへ'}
         </Button>
-      </Box>
-    </Paper>
+      </StyledNavRow>
+    </StyledHeroCard>
   );
 };

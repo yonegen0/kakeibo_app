@@ -5,6 +5,37 @@
 import type { ZodError } from 'zod';
 import { mfCsvFileSchema, type MfCsvData } from '@/schemas/mfCsvFileSchema';
 
+/** MoneyForward CSV の振替ペア行を示す金額文字列 */
+const MF_TRANSFER_AMOUNT_LITERAL = '(振替)';
+
+/** 日付を YYYY/M/D → YYYY/MM/DD にゼロパディングする */
+const padMfDate = (raw: string): string => {
+  const m = raw.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+  if (!m) return raw;
+  return `${m[1]}/${m[2].padStart(2, '0')}/${m[3].padStart(2, '0')}`;
+};
+
+/**
+ * MoneyForward 固有の書式ゆらぎを Zod 検証前に正規化する。
+ * - 振替ペア行（金額が "(振替)" の行）を除外する
+ * - 日付の月・日をゼロパディングして YYYY/MM/DD に揃える
+ */
+const normalizeMfCsvRows = (rows: unknown): unknown[] => {
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .filter((row): row is Record<string, unknown> => {
+      if (typeof row !== 'object' || row === null) return false;
+      const amount = (row as Record<string, unknown>)['金額（円）'];
+      return String(amount).trim() !== MF_TRANSFER_AMOUNT_LITERAL;
+    })
+    .map((row) => {
+      const date = row['日付'];
+      if (typeof date !== 'string') return row;
+      return { ...row, '日付': padMfDate(date) };
+    });
+};
+
 /** 検証済み 1 行に、一覧用の安定キーを付けた形 */
 export type MfCsvTransactionWithId = MfCsvData[number] & {
   /** 一覧用 ID */
@@ -34,8 +65,9 @@ export const buildMfCsvTransactionsFromRows = (
   rows: unknown,
   options: BuildMfCsvTransactionsOptions,
 ): BuildMfCsvTransactionsResult => {
-  // 行配列を検証
-  const validated = mfCsvFileSchema.safeParse(rows);
+  // 行配列を正規化してから検証
+  const normalized = normalizeMfCsvRows(rows);
+  const validated = mfCsvFileSchema.safeParse(normalized);
   if (!validated.success) {
     return {
       ok: false,
