@@ -6,6 +6,7 @@
 
 import { Suspense } from 'react';
 import { Container } from '@mui/material';
+import { StyledPage } from '@/components/atoms/PageShell';
 import { AnalysisTemplate } from '@/components/templates/AnalysisTemplate';
 
 /**
@@ -15,11 +16,12 @@ import { AnalysisTemplate } from '@/components/templates/AnalysisTemplate';
  */
 export default function AnalysisPage() {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* AnalysisTemplate を Suspense でラップして非同期処理をハンドリング */}
-      <Suspense fallback={null}>
-        <AnalysisTemplate />
-      </Suspense>
-    </Container>
+    <StyledPage>
+      <Container maxWidth="lg">
+        <Suspense fallback={null}>
+          <AnalysisTemplate />
+        </Suspense>
+      </Container>
+    </StyledPage>
   );
 }

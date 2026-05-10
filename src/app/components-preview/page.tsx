@@ -7,8 +7,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Alert, Box, Button, Container, Paper, Typography } from '@mui/material';
+import { Alert, Box, Container, Paper, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { Button } from '@/components/atoms/Button';
+import { StyledPage, StyledHeroCard } from '@/components/atoms/PageShell';
 import type { AIReportModel } from '@/models/AIReportModel';
 import type { SummaryModel, TransactionModel } from '@/models/TransactionModel';
 import { SummaryCard } from '@/components/organisms/SummaryCard';
@@ -51,7 +53,7 @@ const mockTransactions: TransactionModel[] = [
     date: '2026/03/05',
     amount: { value: -7800, unit: '円' },
     content: '電気代',
-    category: '光熱費',
+    category: '水道・光熱費',
     subCategory: '電気',
     isCalculated: true,
     isTransfer: false,
@@ -92,29 +94,106 @@ const mockReport: AIReportModel = {
   createdAt: new Date('2026-03-31T10:00:00Z').toISOString(),
 };
 
-const StyledPage = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
-  paddingTop: theme.spacing(4),
-  paddingBottom: theme.spacing(6),
-  backgroundColor: theme.palette.background.default,
-}));
+/* --- Styled --- */
 
-const StyledBackLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.primary.main,
-  textDecoration: 'none',
-  fontWeight: 600,
-  '&:hover': {
-    textDecoration: 'underline',
+/** DEV PREVIEW バッジ */
+const StyledDevBadge = styled(Box)(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: theme.spacing(0.75),
+  padding: `${theme.spacing(0.5)} ${theme.spacing(1.25)}`,
+  borderRadius: theme.spacing(6),
+  border: `1px solid ${theme.palette.secondary.main}50`,
+  backgroundColor: `${theme.palette.secondary.main}10`,
+  marginBottom: theme.spacing(1.5),
+  '&::before': {
+    content: '""',
+    display: 'inline-block',
+    width: 6,
+    height: 6,
+    borderRadius: '50%',
+    backgroundColor: theme.palette.secondary.main,
+    flexShrink: 0,
   },
 }));
 
+/** DEV PREVIEW バッジ内テキスト */
+const StyledDevBadgeText = styled('span')(({ theme }) => ({
+  fontFamily: '"JetBrains Mono", monospace',
+  fontSize: '0.6875rem',
+  fontWeight: 700,
+  letterSpacing: '0.1em',
+  color: theme.palette.secondary.dark,
+}));
+
+/** ページタイトル */
+const StyledPreviewTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 800,
+  marginBottom: theme.spacing(0.5),
+}));
+
+/** ページ説明文 */
+const StyledPreviewLead = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+}));
+
+/** ボタン操作行 */
+const StyledButtonRow = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: theme.spacing(1),
+  marginTop: theme.spacing(1.5),
+}));
+
+/** 状態表示アラート */
+const StyledStateAlert = styled(Alert)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+}));
+
+/** PSV / レポート ID 表示テキスト */
+const StyledMetaText = styled(Typography)(({ theme }) => ({
+  display: 'block',
+  marginTop: theme.spacing(1),
+  fontFamily: '"JetBrains Mono", monospace',
+  fontSize: '0.75rem',
+}));
+
+/** ホームへ戻るリンク */
+const StyledBackLink = styled(Link)(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  color: theme.palette.text.secondary,
+  fontWeight: 500,
+  fontSize: '0.8125rem',
+  textDecoration: 'none',
+  padding: `${theme.spacing(0.75)} ${theme.spacing(1.25)}`,
+  borderRadius: theme.spacing(1.5),
+  border: `1px solid ${theme.palette.primary.light}20`,
+  transition: 'all .18s ease',
+  marginTop: theme.spacing(1.5),
+  '&:hover': {
+    color: theme.palette.secondary.dark,
+    borderColor: theme.palette.secondary.main,
+    backgroundColor: `${theme.palette.secondary.main}0C`,
+  },
+}));
+
+/** セクション間余白 */
 const StyledSection = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(3),
 }));
 
+/** セクション見出し */
+const StyledSubtitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  marginBottom: theme.spacing(1),
+}));
+
+/** プロンプトプレビュー */
 const StyledPromptPreview = styled(Paper)(({ theme }) => ({
   borderRadius: theme.spacing(1.5),
   border: `1px solid ${theme.palette.divider}`,
+  borderLeft: `3px solid ${theme.palette.secondary.main}`,
   padding: theme.spacing(2),
   whiteSpace: 'pre-wrap',
   fontFamily: theme.typography.fontFamily,
@@ -122,14 +201,9 @@ const StyledPromptPreview = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const StyledHeader = styled(Paper)(({ theme }) => ({
-  borderRadius: theme.spacing(2),
-  border: `1px solid ${theme.palette.divider}`,
-  padding: theme.spacing(2.5),
-}));
-
 /**
  * コンポーネント組み合わせ確認ページ
+ * @returns コンポーネント確認ページの JSX 要素
  */
 export default function ComponentsPreviewPage() {
   const router = useRouter();
@@ -194,14 +268,17 @@ export default function ComponentsPreviewPage() {
   return (
     <StyledPage>
       <Container maxWidth="lg">
-        <StyledHeader elevation={0}>
-          <Typography variant="h5" fontWeight={800}>
-            Components Preview
-          </Typography>
-          <Typography color="text.secondary">
+        <StyledHeroCard elevation={0}>
+          <StyledDevBadge>
+            <StyledDevBadgeText>DEV PREVIEW</StyledDevBadgeText>
+          </StyledDevBadge>
+
+          <StyledPreviewTitle variant="h5">Components Preview</StyledPreviewTitle>
+          <StyledPreviewLead>
             `SummaryCard` / `AIReport` / `TransactionTable` と prompt 編集フローの確認ページです。
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1.5 }}>
+          </StyledPreviewLead>
+
+          <StyledButtonRow>
             <Button size="small" variant="contained" disabled={flowBusy} onClick={handleSeedPsv}>
               {flowBusy ? '処理中...' : 'プレビュー用PSV作成→分析テンプレ'}
             </Button>
@@ -234,20 +311,21 @@ export default function ComponentsPreviewPage() {
                 レポートテンプレ再表示
               </Button>
             )}
-          </Box>
+          </StyledButtonRow>
+
           {flowError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {flowError}
-            </Alert>
+            <StyledStateAlert severity="error">{flowError}</StyledStateAlert>
           )}
+
           {(lastPsvId || lastReportId) && (
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            <StyledMetaText variant="caption" color="text.secondary">
               {lastPsvId && <>lastPsvId: {lastPsvId} </>}
               {lastReportId && <>lastReportId: {lastReportId}</>}
-            </Typography>
+            </StyledMetaText>
           )}
-          <StyledBackLink href="/">ホームに戻る</StyledBackLink>
-        </StyledHeader>
+
+          <StyledBackLink href="/">← ホームに戻る</StyledBackLink>
+        </StyledHeroCard>
 
         <StyledSection>
           <SummaryCard summaries={mockSummaries} />
@@ -258,9 +336,7 @@ export default function ComponentsPreviewPage() {
         </StyledSection>
 
         <StyledSection>
-          <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1 }}>
-            Prompt Snapshot Preview
-          </Typography>
+          <StyledSubtitle variant="subtitle2">Prompt Snapshot Preview</StyledSubtitle>
           <StyledPromptPreview elevation={0}>{mockReport.promptSnapshot}</StyledPromptPreview>
         </StyledSection>
 
@@ -271,4 +347,3 @@ export default function ComponentsPreviewPage() {
     </StyledPage>
   );
 }
-

@@ -6,6 +6,7 @@
 
 import { Suspense } from 'react';
 import { Container } from '@mui/material';
+import { StyledPage } from '@/components/atoms/PageShell';
 import { ReportTemplate } from '@/components/templates/ReportTemplate';
 
 /**
@@ -15,11 +16,12 @@ import { ReportTemplate } from '@/components/templates/ReportTemplate';
  */
 export default function ReportPage() {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* ReportTemplate を Suspense でラップして非同期処理をハンドリング */}
-      <Suspense fallback={null}>
-        <ReportTemplate />
-      </Suspense>
-    </Container>
+    <StyledPage>
+      <Container maxWidth="lg">
+        <Suspense fallback={null}>
+          <ReportTemplate />
+        </Suspense>
+      </Container>
+    </StyledPage>
   );
 }

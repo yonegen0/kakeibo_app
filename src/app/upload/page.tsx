@@ -5,6 +5,7 @@
 'use client';
 
 import { Container } from '@mui/material';
+import { StyledPage } from '@/components/atoms/PageShell';
 import { TransactionImportTemplate } from '@/components/templates/TransactionImportTemplate';
 
 /**
@@ -14,9 +15,10 @@ import { TransactionImportTemplate } from '@/components/templates/TransactionImp
  */
 export default function UploadPage() {
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* TransactionImportTemplate に高さを指定してテーブル表示領域を確保 */}
-      <TransactionImportTemplate height={500} />
-    </Container>
+    <StyledPage>
+      <Container maxWidth="lg">
+        <TransactionImportTemplate height={500} />
+      </Container>
+    </StyledPage>
   );
 }
