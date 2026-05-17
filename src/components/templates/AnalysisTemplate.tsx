@@ -42,6 +42,12 @@ const StyledPromptControls = styled(Box)(({ theme }) => ({
   display: 'flex',
   gap: theme.spacing(1),
   marginBottom: theme.spacing(1.5),
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    '& > button': {
+      width: '100%',
+    },
+  },
 }));
 
 /* --- Component --- */

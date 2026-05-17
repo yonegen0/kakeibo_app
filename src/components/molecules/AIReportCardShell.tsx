@@ -43,6 +43,14 @@ const StyledReportCardPaper = styled(Paper, {
     background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
     opacity: 0.8,
   },
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(2.5),
+    borderRadius: theme.spacing(2),
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+    boxShadow: '0 10px 20px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04)',
+  },
 }));
 
 /**

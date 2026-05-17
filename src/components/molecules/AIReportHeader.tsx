@@ -15,6 +15,13 @@ const StyledHeaderRow = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   paddingBottom: theme.spacing(2),
   borderBottom: `1px solid ${theme.palette.divider}`,
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: theme.spacing(1),
+    marginBottom: theme.spacing(2),
+    paddingBottom: theme.spacing(1.5),
+  },
 }));
 
 /** 左側のアイコンとタイトル塊を横並びにするラッパー  */
@@ -22,12 +29,18 @@ const StyledTitleCluster = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1.25),
+  },
 }));
 
 /**  レポート種別を示す主アイコン（サイズとプライマリ色）   */
 const StyledInsightsIcon = styled(InsightsIcon)(({ theme }) => ({
   fontSize: 32,
   color: theme.palette.primary.main,
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 24,
+  },
 }));
 
 /** 見出しテキスト（アイキャッチ＋見出し）を縦積みにするラッパー  */
@@ -50,6 +63,9 @@ const StyledMainHeading = styled(Typography)(() => ({
 /** 右側の補足説明（セカンダリテキスト色）   */
 const StyledSideCaption = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
+  [theme.breakpoints.down('sm')]: {
+    display: 'none',
+  },
 }));
 
 /** AIReportHeader の Props */

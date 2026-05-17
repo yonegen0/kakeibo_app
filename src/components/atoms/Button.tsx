@@ -32,7 +32,7 @@ const StyledMuiButton = styled(MuiButton, {
   const accent = getAccentColor(theme, $buttonColor);
 
   return {
-    minWidth: "180px",
+    minWidth: "100px",
     borderRadius: "12px",
     backgroundColor: alpha(theme.palette.background.paper, 0.05),
     backdropFilter: "blur(10px)",
@@ -55,6 +55,16 @@ const StyledMuiButton = styled(MuiButton, {
       borderColor: theme.palette.grey[300],
       color: theme.palette.grey[500],
       boxShadow: "none",
+    },
+    [theme.breakpoints.down("sm")]: {
+      minWidth: "auto",
+      padding: "8px 16px",
+      fontSize: "0.875rem",
+      boxShadow:
+        `0 0 8px ${alpha(accent, 0.25)}, inset 0 0 6px ${alpha(accent, 0.08)}`,
+      "&:hover": {
+        boxShadow: `0 0 10px ${alpha(accent, 0.4)}`,
+      },
     },
   };
 });

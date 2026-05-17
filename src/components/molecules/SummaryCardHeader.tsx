@@ -35,6 +35,11 @@ const StyledCardHeader = styled(Box)(({ theme }) => ({
   paddingBottom: theme.spacing(2),
   marginBottom: theme.spacing(2.5),
   borderBottom: `1px solid ${alpha(theme.palette.secondary.main, 0.15)}`,
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1),
+    paddingBottom: theme.spacing(1.5),
+    marginBottom: theme.spacing(1.5),
+  },
 }));
 
 /** タイトル周りのブロック */
@@ -126,6 +131,10 @@ const StyledMonthFormControl = styled(FormControl)(({ theme }) => ({
   '& .MuiSelect-select': {
     fontWeight: 600,
     fontSize: '0.875rem',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    minWidth: 'auto',
   },
 }));
 

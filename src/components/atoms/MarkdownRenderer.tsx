@@ -82,6 +82,36 @@ const StyledMarkdown = styled(Box)(({ theme }) => ({
     backgroundColor: 'rgba(15, 23, 42, 0.06)',
     overflowX: 'auto',
   },
+
+  '& img': {
+    maxWidth: '100%',
+    height: 'auto',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.85rem',
+    lineHeight: 1.6,
+
+    '& h1': {
+      fontSize: '1.15rem',
+    },
+    '& h2': {
+      fontSize: '1.05rem',
+    },
+    '& h3': {
+      fontSize: '0.95rem',
+    },
+    '& h1, & h2, & h3': {
+      marginTop: theme.spacing(2),
+    },
+    '& ul, & ol': {
+      paddingLeft: theme.spacing(2.5),
+    },
+    '& blockquote': {
+      margin: theme.spacing(1, 0),
+      padding: theme.spacing(0.75, 1.25),
+    },
+  },
 }));
 
 /**

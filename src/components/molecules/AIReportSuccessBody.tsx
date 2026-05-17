@@ -54,6 +54,9 @@ const StyledHighlightsRow = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
   gap: theme.spacing(1.5),
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1),
+  },
 }));
 
 /** ハイライト1件（入場フェードの遅延・ホバー時のわずかな浮き）。 */
@@ -82,6 +85,11 @@ const StyledSuccessBadgeIcon = styled(CheckCircleOutlineIcon)(({ theme }) => ({
   color: theme.palette.success.main,
   fontSize: 20,
   animation: `${aiReportSuccessPulse} 3s ease-in-out infinite`,
+  [theme.breakpoints.down('sm')]: {
+    top: -4,
+    right: -4,
+    fontSize: 16,
+  },
 }));
 
 /**

@@ -38,11 +38,19 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    '& > button': {
+      width: '100%',
+    },
+  },
 }));
 
 /** エラー表示スロット */
 const StyledErrorSlot = styled(Box)(() => ({
   flex: 1,
+  width: '100%',
 }));
 
 /* --- Component --- */

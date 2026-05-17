@@ -30,6 +30,11 @@ const StyledMetricsRow = styled(Box)(({ theme }) => ({
   gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
   gap: theme.spacing(2),
   marginTop: theme.spacing(3),
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: '1fr',
+    gap: theme.spacing(1.25),
+    marginTop: theme.spacing(2),
+  },
 }));
 
 /** 各メトリクスタイルカード */
@@ -61,6 +66,10 @@ const StyledMetricCard = styled(Paper, {
       backgroundColor: bar,
       borderRadius: '4px 0 0 4px',
     },
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(1.5),
+      paddingLeft: theme.spacing(1.75),
+    },
   };
 });
 
@@ -70,6 +79,10 @@ const StyledMetricLabel = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
   color: theme.palette.text.secondary,
   marginBottom: theme.spacing(0.75),
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.6875rem',
+    marginBottom: theme.spacing(0.5),
+  },
 }));
 
 /**

@@ -38,6 +38,10 @@ const StyledRoot = styled(Paper)(({ theme }) => ({
     background: `linear-gradient(90deg, ${theme.palette.secondary.main}, ${theme.palette.primary.main})`,
     opacity: 0.9,
   },
+  [theme.breakpoints.down('sm')]: {
+    borderRadius: theme.spacing(2),
+    boxShadow: '0 6px 20px rgba(15, 23, 42, 0.06)',
+  },
 }));
 
 /** ルート内のパディング領域 */
@@ -45,6 +49,10 @@ const StyledRootInner = styled(Box)(({ theme }) => ({
   position: 'relative',
   padding: theme.spacing(3),
   paddingTop: theme.spacing(3.5),
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+    paddingTop: theme.spacing(2.5),
+  },
 }));
 
 /* --- Component --- */

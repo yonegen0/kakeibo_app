@@ -37,6 +37,11 @@ const StyledInput = styled(TextField)(({ theme }) => {
           borderWidth: "1px",
           borderColor: theme.palette.primary.main,
         },
+        [theme.breakpoints.down("sm")]: {
+          boxShadow:
+            `0 0 6px ${alpha(theme.palette.primary.main, 0.25)}, ` +
+            `inset 0 0 6px ${alpha(theme.palette.primary.main, 0.08)}`,
+        },
       },
     },
     "& .MuiInputLabel-root": {

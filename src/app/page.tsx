@@ -20,6 +20,10 @@ const StyledHeroHeader = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
   marginBottom: theme.spacing(2),
   flexWrap: 'wrap',
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1),
+    marginBottom: theme.spacing(1.5),
+  },
 }));
 
 /** アプリ名バッジ内テキスト */
@@ -72,6 +76,14 @@ const StyledHeroLead = styled(Typography)(({ theme }) => ({
 const StyledCtaRow = styled(Stack)(({ theme }) => ({
   marginTop: theme.spacing(3),
   flexWrap: 'wrap',
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    marginTop: theme.spacing(2),
+    '& > *': {
+      width: '100%',
+    },
+  },
 }));
 
 /** コンポーネント確認ページへのリンク */
@@ -87,18 +99,26 @@ const StyledPreviewLink = styled(Link)(({ theme }) => ({
   borderRadius: theme.spacing(1.5),
   border: `1px solid ${theme.palette.primary.light}20`,
   transition: 'all .18s ease',
-  '&:hover': {
-    color: theme.palette.secondary.dark,
-    borderColor: theme.palette.secondary.main,
-    backgroundColor: `${theme.palette.secondary.main}0C`,
+  '@media (hover: hover)': {
+    '&:hover': {
+      color: theme.palette.secondary.dark,
+      borderColor: theme.palette.secondary.main,
+      backgroundColor: `${theme.palette.secondary.main}0C`,
+    },
+    '&:hover::after': {
+      transform: 'translateX(3px)',
+    },
   },
   '&::after': {
     content: '"→"',
     display: 'inline-block',
     transition: 'transform .18s ease',
   },
-  '&:hover::after': {
-    transform: 'translateX(3px)',
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    justifyContent: 'space-between',
+    fontSize: '0.75rem',
+    padding: `${theme.spacing(0.625)} ${theme.spacing(1)}`,
   },
 }));
 
@@ -108,6 +128,10 @@ const StyledSteps = styled(Box)(({ theme }) => ({
   gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
   gap: theme.spacing(1.5),
   marginTop: theme.spacing(3.5),
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1),
+    marginTop: theme.spacing(2.5),
+  },
 }));
 
 /** 各ステップカード（クリックで該当ページへ遷移） */
@@ -124,14 +148,23 @@ const StyledStepCard = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
   cursor: 'pointer',
   transition: 'transform .2s ease, box-shadow .2s ease, border-color .2s ease',
-  '&:hover': {
-    transform: 'translateY(-3px)',
-    borderLeftColor: theme.palette.secondary.light,
-    boxShadow: '0 8px 24px -6px rgba(6, 182, 212, 0.2), 0 2px 6px rgba(15, 23, 42, 0.06)',
+  '@media (hover: hover)': {
+    '&:hover': {
+      transform: 'translateY(-3px)',
+      borderLeftColor: theme.palette.secondary.light,
+      boxShadow: '0 8px 24px -6px rgba(6, 182, 212, 0.2), 0 2px 6px rgba(15, 23, 42, 0.06)',
+    },
+  },
+  '&:active': {
+    transform: 'scale(0.99)',
   },
   '&:focus-visible': {
     outline: `2px solid ${theme.palette.secondary.main}`,
     outlineOffset: '2px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: `${theme.spacing(1.5)} ${theme.spacing(1.5)} ${theme.spacing(2)}`,
+    borderRadius: theme.spacing(1.5),
   },
 }));
 
@@ -149,6 +182,12 @@ const StyledStepNumber = styled(Box)(({ theme }) => ({
   userSelect: 'none',
   pointerEvents: 'none',
   letterSpacing: '-0.04em',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '2.5rem',
+    opacity: 0.08,
+    top: 0,
+    right: theme.spacing(1),
+  },
 }));
 
 /** STEP ラベル */

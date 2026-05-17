@@ -49,10 +49,14 @@ const StyledRootContainer = styled(Box, {
   width: width ?? '100%',
   maxWidth: width ? 'none' : 600,
   height: height ?? 'auto',
-  mx: 'auto',
-  mt: theme.spacing(4),
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  marginTop: theme.spacing(4),
   display: 'flex',
   flexDirection: 'column',
+  [theme.breakpoints.down('sm')]: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 /** 状態に応じたベースカード（共通スタイル） */
@@ -66,6 +70,17 @@ const StatusCard = styled(Paper)(({ theme }) => ({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(4),
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(3),
+  },
+}));
+
+/** エラー状態用カード（左ボーダーアクセント付き） */
+const StyledErrorStatusCard = styled(StatusCard)(({ theme }) => ({
+  borderLeft: `6px solid ${theme.palette.error.dark}`,
 }));
 
 /** 入力待機用の点線ボーダー付きドロップエリア */
@@ -86,10 +101,36 @@ const StyledProcessingBox = styled(StatusCard)(({ theme }) => ({
   backgroundColor: 'rgba(6, 182, 212, 0.02)',
 }));
 
-/** アップロードアイコン */
-const StyledUploadIcon = styled(CloudUploadIcon)(({ theme }) => ({
+/** 状態カード内で使う大きめアイコンの共通スタイル（fontSize と下余白） */
+const styledLargeIconStyle = (theme: import('@mui/material/styles').Theme) => ({
   fontSize: 64,
+  marginBottom: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 48,
+    marginBottom: theme.spacing(1.5),
+  },
+});
+
+/** アップロードアイコン（テキスト色） */
+const StyledUploadIcon = styled(CloudUploadIcon)(({ theme }) => ({
+  ...styledLargeIconStyle(theme),
   color: theme.palette.text.secondary,
+}));
+
+/** 成功アイコン（緑） */
+const StyledSuccessIcon = styled(CheckCircleOutlineIcon)(({ theme }) => ({
+  ...styledLargeIconStyle(theme),
+  color: theme.palette.success.main,
+}));
+
+/** エラーアイコン（赤） */
+const StyledErrorIcon = styled(ErrorOutlineIcon)(({ theme }) => ({
+  ...styledLargeIconStyle(theme),
+  color: theme.palette.error.main,
+}));
+
+/** 解析中スピナー（下余白を持たせる） */
+const StyledProcessingSpinner = styled(CircularProgress)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
@@ -99,6 +140,25 @@ const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
   borderRadius: 5,
   marginTop: theme.spacing(3),
   width: '100%',
+  [theme.breakpoints.down('sm')]: {
+    height: 8,
+    marginTop: theme.spacing(2),
+  },
+}));
+
+/** エラー Alert（左寄せテキスト・全幅・下余白） */
+const StyledDetailAlert = styled(Alert)(({ theme }) => ({
+  marginBottom: theme.spacing(3),
+  textAlign: 'left',
+  width: '100%',
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: theme.spacing(2),
+  },
+}));
+
+/** 「ファイル形式を確認」の注意書き（下余白） */
+const StyledErrorHint = styled(Typography)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
 }));
 
 /** カード下部のボタン配置エリア */
@@ -107,6 +167,14 @@ const StyledActionArea = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   gap: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    marginTop: theme.spacing(2),
+    flexDirection: 'column',
+    width: '100%',
+    '& > *': {
+      width: '100%',
+    },
+  },
 }));
 
 /**
@@ -156,7 +224,7 @@ export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
       {/* 解析中：ローディングとメッセージを表示 */}
       {isParsing && (
         <StyledProcessingBox elevation={2}>
-          <CircularProgress color="secondary" size={60} thickness={4} sx={{ mb: 2 }} />
+          <StyledProcessingSpinner color="secondary" size={60} thickness={4} />
           <Typography variant="h6" color="secondary" fontWeight="bold">
             データを解析しています...
           </Typography>
@@ -170,7 +238,7 @@ export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
       {/* 成功：検証完了メッセージと再選択ボタンを表示 */}
       {dataLength > 0 && (
         <StatusCard elevation={1}>
-          <CheckCircleOutlineIcon color="success" sx={{ fontSize: 64, mb: 2 }} />
+          <StyledSuccessIcon />
           <Typography variant="h5" fontWeight="bold" gutterBottom>
             読み込みが完了しました
           </Typography>
@@ -187,22 +255,22 @@ export const CsvUploadMonitor = (props: CsvUploadMonitorProps) => {
 
       {/* エラー：詳細メッセージと再試行手段を提示 */}
       {error && (
-        <StatusCard elevation={1} sx={{ borderLeft: '6px solid #d32f2f' }}>
-          <ErrorOutlineIcon color="error" sx={{ fontSize: 64, mb: 2 }} />
+        <StyledErrorStatusCard elevation={1}>
+          <StyledErrorIcon />
           <Typography variant="h5" color="error" fontWeight="bold" gutterBottom>
             解析に失敗しました
           </Typography>
-          <Alert severity="error" variant="outlined" sx={{ mb: 3, textAlign: 'left', width: '100%' }}>
+          <StyledDetailAlert severity="error" variant="outlined">
             <AlertTitle>エラー詳細</AlertTitle>
             {error}
-          </Alert>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+          </StyledDetailAlert>
+          <StyledErrorHint variant="body2" color="textSecondary">
             ファイルの形式が正しいか確認し、もう一度お試しください。
-          </Typography>
+          </StyledErrorHint>
           <Button variant="contained" color="error" onClick={onReset}>
             再試行する
           </Button>
-        </StatusCard>
+        </StyledErrorStatusCard>
       )}
     </StyledRootContainer>
   );

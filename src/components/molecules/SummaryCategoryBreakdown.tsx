@@ -24,6 +24,10 @@ const StyledCategorySection = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(3.5),
   paddingTop: theme.spacing(2.5),
   borderTop: `1px solid ${theme.palette.divider}`,
+  [theme.breakpoints.down('sm')]: {
+    marginTop: theme.spacing(2.5),
+    paddingTop: theme.spacing(2),
+  },
 }));
 
 /** セクションのタイトル */
@@ -58,6 +62,11 @@ const StyledCategoryRowTop = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   gap: theme.spacing(2),
   marginBottom: theme.spacing(1),
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: theme.spacing(0.5),
+  },
 }));
 
 /** 名前エリア（ドット＋カテゴリ名＋ピル） */
@@ -66,6 +75,9 @@ const StyledCategoryNameRow = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: theme.spacing(1),
   minWidth: 0,
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+  },
 }));
 
 /** 種別を示すドット */
@@ -90,6 +102,12 @@ const StyledCategoryName = styled(Typography)(({ theme }) => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+  [theme.breakpoints.down('sm')]: {
+    whiteSpace: 'normal',
+    overflow: 'visible',
+    flex: 1,
+    minWidth: 0,
+  },
 }));
 
 /** 収支種別ラベル（ピル） */
@@ -113,6 +131,10 @@ const StyledCategoryAmountRow = styled(Box)(({ theme }) => ({
   alignItems: 'baseline',
   justifyContent: 'flex-end',
   gap: theme.spacing(1.5),
+  [theme.breakpoints.down('sm')]: {
+    justifyContent: 'space-between',
+    width: '100%',
+  },
 }));
 
 /** 割合テキスト */

@@ -18,6 +18,10 @@ export const StyledPage = styled(Box)(({ theme }) => ({
     radial-gradient(ellipse at 100% 100%, ${theme.palette.primary.light}12 0%, transparent 50%),
     ${theme.palette.background.default}
   `,
+  [theme.breakpoints.down('md')]: {
+    paddingTop: theme.spacing(3),
+    paddingBottom: theme.spacing(4),
+  },
 }));
 
 /** cyan glow + 多層 shadow の Paper カード */
@@ -34,6 +38,17 @@ export const StyledHeroCard = styled(Paper)(({ theme }) => ({
     0 1px 2px rgba(15, 23, 42, 0.04),
     0 24px 48px -12px rgba(15, 23, 42, 0.16)
   `,
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(2.5),
+    borderRadius: theme.spacing(2),
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+    boxShadow: `
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 10px 20px -8px rgba(15, 23, 42, 0.12)
+    `,
+  },
 }));
 
 /** ナビゲーションボタンを両端に配置する行 */
@@ -42,6 +57,15 @@ export const StyledNavRow = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between',
   alignItems: 'center',
   marginTop: theme.spacing(3),
+  gap: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column-reverse',
+    alignItems: 'stretch',
+    gap: theme.spacing(1.5),
+    '& > *': {
+      width: '100%',
+    },
+  },
 }));
 
 /* --- StepBadge --- */
@@ -63,6 +87,10 @@ const StyledBadgeOuter = styled(Box)(({ theme }) => ({
     borderRadius: '50%',
     backgroundColor: theme.palette.secondary.main,
     flexShrink: 0,
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: `${theme.spacing(0.25)} ${theme.spacing(1)}`,
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -98,11 +126,19 @@ export const StepBadge = ({ step }: StepBadgeProps) => (
 const StyledStepTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 800,
   marginBottom: theme.spacing(0.75),
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: theme.spacing(0.5),
+  },
 }));
 
 const StyledStepLead = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   marginBottom: theme.spacing(3),
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.875rem',
+    lineHeight: 1.5,
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 /**

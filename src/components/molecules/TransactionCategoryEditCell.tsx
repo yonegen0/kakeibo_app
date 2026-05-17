@@ -7,7 +7,8 @@ import type { SelectChangeEvent } from '@mui/material';
 import { useGridApiContext, type GridRenderEditCellParams } from '@mui/x-data-grid';
 import type { Category, TransactionModel } from '@/models/TransactionModel';
 import { Select } from '@/components/atoms/Select';
-import { VALID_CATEGORIES, isValidCategory } from '@/lib/categoryValidation';
+import { isValidCategory } from '@/lib/categoryValidation';
+import { getSelectableCategories } from '@/lib/selectableCategories';
 
 /**
  * 取引「大項目」セルの編集 UI
@@ -19,13 +20,7 @@ export const TransactionCategoryEditCell = (params: GridRenderEditCellParams<Tra
   const apiRef = useGridApiContext();
   const value = (params.value as string) ?? '';
 
-  const { value: amountValue } = params.row.amount;
-  const selectableCategories =
-    amountValue > 0
-      ? VALID_CATEGORIES.filter((c) => c === '収入')
-      : amountValue < 0
-      ? VALID_CATEGORIES.filter((c) => c !== '収入')
-      : VALID_CATEGORIES;
+  const selectableCategories = getSelectableCategories(params.row.amount.value);
 
   const handleChange = (event: SelectChangeEvent<unknown>) => {
     apiRef.current.setEditCellValue({

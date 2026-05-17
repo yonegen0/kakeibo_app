@@ -19,6 +19,10 @@ type MoneyTextProps = {
 const StyledMoney = styled('span')(({ theme }) => ({
   fontWeight: 700,
   color: theme.palette.text.primary,
+  fontVariantNumeric: 'tabular-nums',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.95rem',
+  },
 }));
 
 /**
