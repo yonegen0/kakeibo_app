@@ -7,6 +7,7 @@ import { fn, mocked } from 'storybook/test';
 import { AnalysisTemplate } from '@/components/templates/AnalysisTemplate';
 import * as AnalysisTemplateHookModule from '@/hooks/useAnalysisTemplate';
 import type { SummaryModel } from '@/models/TransactionModel';
+import { assertNoHorizontalOverflow } from '@/test-utils/assertNoHorizontalOverflow';
 
 const mockSummary: SummaryModel = {
   month: '2026-03',
@@ -55,7 +56,8 @@ const meta: Meta<typeof AnalysisTemplate> = {
   title: 'Templates/AnalysisTemplate',
   component: AnalysisTemplate,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
+    pageShell: true,
   },
 };
 
@@ -161,5 +163,30 @@ export const PromptReset: Story = {
     mocked(AnalysisTemplateHookModule.useAnalysisTemplate).mockReturnValue(
       createAnalysisTemplateHookMock({ summaries: [mockSummary], hasPsvId: true }),
     );
+  },
+};
+
+/**
+ * SummaryLoadedMobile: xs でサマリーとプロンプト編集を確認
+ * StyledPromptControls が column になり「デフォルトを読み込む」「リセット」
+ * が縦並びになることと、SummaryCard の縦積みレイアウトを目視確認する。
+ * play() で xs 幅での横スクロール不発を担保する（Phase C-β）。
+ */
+export const SummaryLoadedMobile: Story = {
+  ...SummaryLoaded,
+  parameters: { viewport: { defaultViewport: 'xs' } },
+  play: () => {
+    assertNoHorizontalOverflow();
+  },
+};
+
+/**
+ * AnalyzeErrorMobile: xs でエラー表示と StyledNavRow の column-reverse 確認
+ */
+export const AnalyzeErrorMobile: Story = {
+  ...AnalyzeError,
+  parameters: { viewport: { defaultViewport: 'xs' } },
+  play: () => {
+    assertNoHorizontalOverflow();
   },
 };

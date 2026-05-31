@@ -7,6 +7,7 @@ import { fn, mocked } from 'storybook/test';
 import { ReportTemplate } from '@/components/templates/ReportTemplate';
 import * as ReportTemplateHookModule from '@/hooks/useReportTemplate';
 import type { AIReportModel } from '@/models/AIReportModel';
+import { assertNoHorizontalOverflow } from '@/test-utils/assertNoHorizontalOverflow';
 
 const mockReport: AIReportModel = {
   reportId: 'report-123',
@@ -45,7 +46,8 @@ const meta: Meta<typeof ReportTemplate> = {
   title: 'Templates/ReportTemplate',
   component: ReportTemplate,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
+    pageShell: true,
   },
 };
 
@@ -133,5 +135,30 @@ export const ReloadKeepsPath: Story = {
     mocked(ReportTemplateHookModule.useReportTemplate).mockReturnValue(
       createReportTemplateHookMock({ reportId: 'report-123', report: mockReport }),
     );
+  },
+};
+
+/**
+ * ReportLoadedMobile: xs でレポート本文を確認
+ * AIReportHeader が縦並びになり sideCaption が非表示、MarkdownRenderer の
+ * 文字サイズが縮むことを目視確認する。
+ * play() で xs 幅での横スクロール不発を担保する（Phase C-β）。
+ */
+export const ReportLoadedMobile: Story = {
+  ...ReportLoaded,
+  parameters: { viewport: { defaultViewport: 'xs' } },
+  play: () => {
+    assertNoHorizontalOverflow();
+  },
+};
+
+/**
+ * FetchErrorMobile: xs で警告 Alert と StyledNavRow の column-reverse 確認
+ */
+export const FetchErrorMobile: Story = {
+  ...FetchError,
+  parameters: { viewport: { defaultViewport: 'xs' } },
+  play: () => {
+    assertNoHorizontalOverflow();
   },
 };

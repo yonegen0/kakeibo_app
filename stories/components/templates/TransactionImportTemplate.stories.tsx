@@ -9,6 +9,7 @@ import type { Transaction as MFUploadedTransaction } from '@/hooks/useMFUploader
 import { TransactionImportTemplate } from '@/components/templates/TransactionImportTemplate';
 import type { SummaryModel, TransactionModel } from '@/models/TransactionModel';
 import { CONTENT_MAX_LENGTH } from '@/lib/contentValidation';
+import { assertNoHorizontalOverflow } from '@/test-utils/assertNoHorizontalOverflow';
 
 const mockMfTransactions: MFUploadedTransaction[] = [
   {
@@ -70,7 +71,8 @@ const meta: Meta<typeof TransactionImportTemplate> = {
   title: 'Templates/TransactionImportTemplate',
   component: TransactionImportTemplate,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
+    pageShell: true,
   },
 };
 
@@ -210,5 +212,38 @@ export const CategoryError: Story = {
       }),
     );
   },
+};
+
+/**
+ * DefaultMobile: アップロード待機の xs 表示
+ * CsvUploadMonitor の padding 縮小と StyledHeroCard の角丸縮小を確認する。
+ */
+export const DefaultMobile: Story = {
+  ...Default,
+  parameters: { viewport: { defaultViewport: 'xs' } },
+};
+
+/**
+ * SuccessMobile: 取引一覧をカードリストで表示
+ * md 未満で TransactionGrid が DataGrid から TransactionCardListPanel へ
+ * 切り替わることを目視確認する。あわせて xs 幅で横スクロールが発生
+ * しないことを play() で確認する（Phase C-β）。
+ */
+export const SuccessMobile: Story = {
+  ...Success,
+  parameters: { viewport: { defaultViewport: 'xs' } },
+  play: () => {
+    assertNoHorizontalOverflow();
+  },
+};
+
+/**
+ * ValidationErrorMobile: バリデーション警告 + アクションエリアの縦並び
+ * StyledActionArea が column になり、Alert と CTA ボタンが縦に積まれる
+ * ことを確認する。
+ */
+export const ValidationErrorMobile: Story = {
+  ...ValidationError,
+  parameters: { viewport: { defaultViewport: 'xs' } },
 };
 
